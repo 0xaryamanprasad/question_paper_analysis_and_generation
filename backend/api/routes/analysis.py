@@ -168,6 +168,35 @@ async def classify_question(
         detected = detect_subject_domain(payload.question_text)
         if detected:
             target_subject = detected
+        else:
+            # Question is outside predefined engineering syllabi (e.g. Biology, Physics, Chemistry, Economics)
+            from backend.services.topic_classifier import classify_open_domain_question
+            open_res = classify_open_domain_question(payload.question_text)
+            cand = TopicCandidate(
+                unit_number=int(open_res.get("unit_number", 1)),
+                unit_name=str(open_res.get("unit_name", "Unit 1")),
+                topic=str(open_res.get("topic", "General")),
+                confidence=float(open_res.get("confidence", 0.85)),
+                matched_keywords=open_res.get("matched_keywords", []),
+                method=open_res.get("method", "open_domain_ontology"),
+            )
+            topic_res = TopicClassificationResult(
+                question_id=payload.question_id,
+                question_text=payload.question_text,
+                subject=open_res.get("subject", "General & Interdisciplinary Studies"),
+                course_code=open_res.get("course_code", "GEN101"),
+                unit_number=int(open_res.get("unit_number", 1)),
+                unit_name=str(open_res.get("unit_name", "Unit 1")),
+                topic=str(open_res.get("topic", "General")),
+                confidence=float(open_res.get("confidence", 0.85)),
+                matched_keywords=open_res.get("matched_keywords", []),
+                classification_method=open_res.get("method", "open_domain_ontology"),
+                top_candidates=[cand],
+            )
+            return QuestionClassificationBundle(
+                topic_classification=topic_res,
+                blooms_classification=blooms_res,
+            )
 
     topic_clf = get_topic_classifier(target_subject)
     topic_res = topic_clf.classify_question(payload.question_text, question_id=payload.question_id)

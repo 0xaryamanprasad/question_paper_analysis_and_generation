@@ -139,6 +139,296 @@ def detect_subject_domain(question_text: str) -> Optional[str]:
     return best_subject if best_score > 0 else None
 
 
+OPEN_DOMAIN_ONTOLOGY: Dict[str, Dict[str, Any]] = {
+    "Biology & Life Sciences": {
+        "course_code": "BIO101",
+        "units": {
+            1: ("Plant Physiology & Bioenergetics", [
+                "Photosynthesis, Chloroplasts, and Light Reactions",
+                "Cellular Respiration, Glycolysis, and ATP Production",
+                "Plant Nutrition, Transpiration, and Phloem Transport",
+            ]),
+            2: ("Cell Biology & Molecular Genetics", [
+                "Cell Structure, Organelles, and Membrane Transport",
+                "DNA Replication, Transcription, and Translation",
+                "Cell Cycle, Mitosis, and Meiosis",
+            ]),
+            3: ("Genetics, Heredity & Evolution", [
+                "Mendelian Genetics and Monohybrid/Dihybrid Crosses",
+                "Chromosomal Basis of Inheritance and Mutations",
+                "Evolutionary Biology and Natural Selection",
+            ]),
+            4: ("Human Physiology & Immunology", [
+                "Nervous System, Synapses, and Action Potentials",
+                "Endocrine System and Hormonal Regulation",
+                "Immune System, Antigens, and Antibodies",
+            ]),
+            5: ("Ecology & Environmental Biology", [
+                "Ecosystem Structure, Energy Flow, and Trophic Levels",
+                "Biogeochemical Cycles and Carbon/Nitrogen Budgets",
+                "Biodiversity Conservation and Global Warming",
+            ]),
+        },
+        "keywords": [
+            "photosynthesis", "chloroplast", "chlorophyll", "calvin cycle", "light reaction",
+            "cellular respiration", "mitochondria", "glycolysis", "krebs cycle", "atp",
+            "mitosis", "meiosis", "dna", "rna", "ribosome", "cell membrane", "cell wall",
+            "protein synthesis", "genetics", "mendel", "allele", "chromosome", "mutation",
+            "enzyme", "substrate", "neuron", "synapse", "hormone", "antibody", "antigen",
+            "immune", "ecology", "ecosystem", "transpiration", "trophic", "evolution",
+            "biology", "plant", "organism", "cellular", "photosystem"
+        ]
+    },
+    "Physics & Engineering Physics": {
+        "course_code": "PHY101",
+        "units": {
+            1: ("Mechanics & Wave Motion", [
+                "Newton's Laws of Motion and Conservation of Momentum",
+                "Simple Harmonic Motion, Damping, and Resonance",
+                "Fluid Dynamics and Bernoulli's Principle",
+            ]),
+            2: ("Electromagnetism & Electrodynamics", [
+                "Coulomb's Law, Electric Fields, and Gauss's Law",
+                "Magnetic Fields, Ampere's Law, and Biot-Savart Law",
+                "Maxwell's Equations and Electromagnetic Waves",
+            ]),
+            3: ("Thermodynamics & Statistical Physics", [
+                "Laws of Thermodynamics and Carnot Efficiency",
+                "Entropy, Free Energy, and Enthalpy",
+                "Kinetic Theory of Gases and Maxwell-Boltzmann Distribution",
+            ]),
+            4: ("Optics & Quantum Physics", [
+                "Interference, Diffraction, and Polarization",
+                "Photoelectric Effect, Compton Scattering, and de Broglie Wavelength",
+                "Schrodinger Wave Equation and Quantum State Functions",
+            ]),
+            5: ("Modern Physics & Semiconductor Devices", [
+                "Special Theory of Relativity and Mass-Energy Equivalence",
+                "Nuclear Physics, Radioactivity, and Fission/Fusion",
+                "Semiconductor Physics, p-n Junction, and Transistors",
+            ]),
+        },
+        "keywords": [
+            "quantum", "photoelectric", "wave-particle", "de broglie", "schrodinger",
+            "thermodynamics", "carnot", "entropy", "maxwell", "relativity", "gravitation",
+            "diffraction", "interference", "polarization", "laser", "superconductivity",
+            "harmonic motion", "coulomb", "lorentz", "doppler", "bernoulli", "momentum",
+            "physics", "optics", "photon"
+        ]
+    },
+    "Chemistry & Chemical Sciences": {
+        "course_code": "CHEM101",
+        "units": {
+            1: ("Atomic Structure & Chemical Bonding", [
+                "Bohr Model, Quantum Numbers, and Electronic Configuration",
+                "Covalent, Ionic, and Hydrogen Bonding",
+                "VSEPR Theory and Molecular Hybridization (sp, sp2, sp3)",
+            ]),
+            2: ("Chemical Kinetics & Thermodynamics", [
+                "Reaction Rates, Rate Laws, and Activation Energy",
+                "Chemical Equilibrium and Le Chatelier's Principle",
+                "Acids, Bases, pH Scale, and Buffer Solutions",
+            ]),
+            3: ("Organic Chemistry & Functional Groups", [
+                "IUPAC Nomenclature of Organic Compounds",
+                "Alkanes, Alkenes, Alkynes, and Reaction Mechanisms",
+                "Aromatic Hydrocarbons, Benzene, and Electrophilic Substitution",
+            ]),
+            4: ("Inorganic Chemistry & Coordination Complexes", [
+                "Periodic Trends (Electronegativity, Ionization Energy)",
+                "Transition Metals and Coordination Chemistry",
+                "Crystal Field Theory and Ligand Field Splitting",
+            ]),
+            5: ("Electrochemistry & Analytical Techniques", [
+                "Galvanic Cells, Standard Electrode Potentials, and Nernst Equation",
+                "Electrolysis, Faraday's Laws, and Batteries",
+                "Spectroscopy (UV-Vis, IR, NMR) and Chromatography",
+            ]),
+        },
+        "keywords": [
+            "covalent bond", "ionic bond", "hybridization", "vsepr", "periodic table",
+            "activation energy", "chemical equilibrium", "le chatelier", "ph scale",
+            "acid base", "titration", "redox", "oxidation", "reduction", "organic chemistry",
+            "iupac", "alkane", "alkene", "alkyne", "benzene", "nernst", "galvanic", "electrolysis",
+            "chemistry", "reaction", "catalyst"
+        ]
+    },
+    "Computer Networks": {
+        "course_code": "CS205",
+        "units": {
+            1: ("Physical & Data Link Layers", [
+                "Network Topologies and OSI vs TCP/IP Models",
+                "Framing, Error Detection (CRC), and Flow Control",
+                "Medium Access Control (CSMA/CD, CSMA/CA, Ethernet)",
+            ]),
+            2: ("Network Layer & Routing", [
+                "IPv4/IPv6 Addressing, Subnetting, and CIDR",
+                "Routing Algorithms (Distance Vector, Link State, Dijkstra)",
+                "Routing Protocols (RIP, OSPF, BGP)",
+            ]),
+            3: ("Transport Layer Protocols", [
+                "TCP vs UDP Protocols and Port Numbers",
+                "Connection Establishment, Three-Way Handshake, and Termination",
+                "TCP Flow Control, Sliding Window, and Congestion Control",
+            ]),
+            4: ("Application Layer & Network Services", [
+                "Domain Name System (DNS) Resolution Process",
+                "HTTP/HTTPS, SMTP, FTP, and DHCP Protocols",
+                "Network Address Translation (NAT) and Firewalls",
+            ]),
+            5: ("Network Security & Cryptography", [
+                "Symmetric vs Asymmetric Encryption (AES, RSA)",
+                "Digital Signatures, Certificates, and SSL/TLS",
+                "Cyber Attacks (DoS, Man-in-the-Middle) and Defense Mechanisms",
+            ]),
+        },
+        "keywords": [
+            "tcp/ip", "osi model", "subnet", "subnetting", "cidr", "ipv4", "ipv6",
+            "routing algorithm", "ospf", "bgp", "dns", "http", "https", "dhcp",
+            "sliding window", "three-way handshake", "congestion control", "firewall",
+            "mac address", "ethernet", "packet switching", "csma", "crc", "network"
+        ]
+    },
+    "Software Engineering": {
+        "course_code": "CS206",
+        "units": {
+            1: ("Software Process Models", [
+                "Software Development Life Cycle (SDLC) Phases",
+                "Waterfall, Spiral, and Incremental Models",
+                "Agile Methodologies (Scrum, Kanban, Extreme Programming)",
+            ]),
+            2: ("Software Requirements Engineering", [
+                "Functional and Non-Functional Requirements",
+                "Requirements Gathering, Use Cases, and User Stories",
+                "Software Requirements Specification (SRS) Documentation",
+            ]),
+            3: ("Software Design & Architectural Patterns", [
+                "Modular Design, Coupling, and Cohesion",
+                "Object-Oriented Design and UML Diagrams (Class, Sequence)",
+                "Design Patterns (Creational, Structural, Behavioral)",
+            ]),
+            4: ("Software Testing & Quality Assurance", [
+                "Verification vs Validation and Testing Levels (Unit, Integration, System)",
+                "Black-Box Testing (Equivalence Partitioning, Boundary Value)",
+                "White-Box Testing (Basis Path, Cyclomatic Complexity)",
+            ]),
+            5: ("Software Maintenance & Project Management", [
+                "Software Maintenance Types and Legacy Systems",
+                "Effort Estimation (COCOMO Model) and Risk Management",
+                "Version Control Systems (Git) and CI/CD Pipelines",
+            ]),
+        },
+        "keywords": [
+            "sdlc", "waterfall model", "agile", "scrum", "srs", "use case",
+            "coupling", "cohesion", "uml diagram", "design pattern", "unit testing",
+            "integration testing", "black box", "white box", "cyclomatic complexity",
+            "cocomo", "refactoring", "ci/cd", "software engineering"
+        ]
+    },
+    "Economics & Business Studies": {
+        "course_code": "ECON101",
+        "units": {
+            1: ("Microeconomic Principles & Market Dynamics", [
+                "Supply, Demand, and Market Equilibrium",
+                "Price Elasticity of Demand and Supply",
+                "Consumer Behavior and Utility Maximization",
+            ]),
+            2: ("Market Structures & Production", [
+                "Perfect Competition, Monopoly, Monopolistic Competition, Oligopoly",
+                "Short-Run and Long-Run Cost Curves and Returns to Scale",
+                "Game Theory, Nash Equilibrium, and Cartels",
+            ]),
+            3: ("Macroeconomic Aggregates & National Income", [
+                "Gross Domestic Product (GDP), GNP, and National Income Accounting",
+                "Inflation, Consumer Price Index (CPI), and Unemployment",
+                "Aggregate Demand and Aggregate Supply (AD-AS Model)",
+            ]),
+            4: ("Monetary & Fiscal Policy", [
+                "Central Banking, Money Creation, and Reserve Ratios",
+                "Monetary Policy Tools (Interest Rates, Quantitative Easing)",
+                "Fiscal Policy, Government Deficits, and Public Debt",
+            ]),
+            5: ("International Trade & Global Finance", [
+                "Comparative Advantage and Gains from Trade",
+                "Tariffs, Quotas, and Trade Protectionism",
+                "Foreign Exchange Rates, Balance of Payments, and IMF",
+            ]),
+        },
+        "keywords": [
+            "gdp", "inflation", "macroeconomics", "microeconomics", "supply and demand",
+            "elasticity", "monopoly", "oligopoly", "perfect competition", "fiscal policy",
+            "monetary policy", "interest rate", "central bank", "nash equilibrium", "cpi", "economics"
+        ]
+    }
+}
+
+
+def classify_open_domain_question(question_text: str) -> Dict[str, Any]:
+    """
+    Offline open-domain fallback classifier for subjects outside predefined CS syllabi.
+    Recognizes Biology, Physics, Chemistry, Networks, Economics, or Interdisciplinary concepts.
+    """
+    q_lower = question_text.lower()
+    best_domain = None
+    best_score = 0
+    best_matches = []
+
+    for domain_name, data in OPEN_DOMAIN_ONTOLOGY.items():
+        matched = [kw for kw in data["keywords"] if kw in q_lower]
+        score = sum(2 if len(kw) > 6 else 1 for kw in matched)
+        if score > best_score:
+            best_score = score
+            best_domain = domain_name
+            best_matches = matched
+
+    if best_domain and best_score > 0:
+        domain_info = OPEN_DOMAIN_ONTOLOGY[best_domain]
+        # Find best matching unit & topic
+        best_unit_num = 1
+        best_unit_name = domain_info["units"][1][0]
+        best_topic = domain_info["units"][1][1][0]
+        max_topic_overlap = -1
+
+        for u_num, (u_name, topics) in domain_info["units"].items():
+            for t in topics:
+                t_words = set(re.findall(r"\w+", t.lower()))
+                overlap = len(t_words.intersection(set(re.findall(r"\w+", q_lower))))
+                if overlap > max_topic_overlap:
+                    max_topic_overlap = overlap
+                    best_unit_num = u_num
+                    best_unit_name = u_name
+                    best_topic = t
+
+        return {
+            "subject": best_domain,
+            "course_code": domain_info["course_code"],
+            "unit_number": best_unit_num,
+            "unit_name": best_unit_name,
+            "topic": best_topic,
+            "confidence": min(0.85 + (best_score * 0.03), 0.98),
+            "matched_keywords": best_matches,
+            "method": "open_domain_ontology",
+            "rationale": f"Identified as core {best_domain} curriculum concept based on domain ontology keywords."
+        }
+
+    # Fallback for general / unclassified questions outside known syllabi
+    # Extract salient noun phrase to avoid arbitrary DSA forcing
+    clean_words = [w for w in re.findall(r"[A-Za-z]{3,}", question_text) if w.lower() not in ["what", "how", "why", "when", "where", "explain", "describe", "define", "the", "and", "for", "with"]]
+    salient_concept = " ".join(clean_words[:3]).title() if clean_words else "General Topic"
+
+    return {
+        "subject": "General & Interdisciplinary Studies",
+        "course_code": "GEN101",
+        "unit_number": 1,
+        "unit_name": "Foundational Principles & Concepts",
+        "topic": f"{salient_concept} - Concept & Applications",
+        "confidence": 0.72,
+        "matched_keywords": clean_words[:3],
+        "method": "cross_disciplinary_heuristics",
+        "rationale": "Classified outside standard computer engineering syllabi as general interdisciplinary studies."
+    }
+
+
 def classify_domain_and_topic_with_gemini(question_text: str) -> Optional[Dict[str, Any]]:
     """
     Leverages Google Gemini API to dynamically classify an arbitrary examination question
@@ -153,22 +443,24 @@ def classify_domain_and_topic_with_gemini(question_text: str) -> Optional[Dict[s
     try:
         from google import genai
         client = genai.Client(api_key=api_key)
-        model = getattr(settings, "gemini_model", "gemini-2.5-flash") or "gemini-2.5-flash"
+        model = getattr(settings, "gemini_model", "gemini-3.5-flash") or "gemini-3.5-flash"
 
-        prompt = f"""You are an expert university curriculum evaluator and professor across computer science and engineering disciplines.
+        prompt = f"""You are an expert university professor and curriculum evaluator across ALL academic disciplines (Computer Science, Electrical, Mechanical, Mathematics, Physics, Chemistry, Biology & Life Sciences, Economics, Humanities, etc.).
 Analyze this examination question prompt:
 Question: "{question_text}"
 
-Classify it into:
-1. Academic Subject (e.g. "Computer Organization and Architecture", "Operating Systems", "Mathematics - II", "Database Management Systems", "Data Structures and Algorithms", "Computer Networks", "Software Engineering")
-2. Course Code (e.g. CS204, CS202, 23BS1004, CS203, CS201, CS205)
+If the question belongs to ANY academic discipline (such as Biology, Physics, Chemistry, Medicine, Economics, History, or Computer Science):
+Accurately identify its authentic:
+1. Academic Subject (e.g. "Biology & Life Sciences", "Physics & Engineering Physics", "Chemistry & Chemical Sciences", "Computer Organization and Architecture", "Operating Systems", "Mathematics - II", etc.)
+2. Course Code (e.g. BIO101, PHY101, CHEM101, CS204, CS202, CS203, CS201)
 3. Unit Number (integer 1 to 5)
-4. Unit Name (e.g. "Processor Organization & Instruction Pipelining", "Data Representation & Storage Systems", "Process Synchronization & Deadlocks", "Memory Management")
-5. Specific Topic (e.g. "Instruction Pipelining and Pipeline Hazards", "Storage Hierarchy and Data Measurement Units (Bits, Bytes, Words, Megabytes, Gigabytes)", "Deadlock Prevention, Avoidance, and Banker's Algorithm", "Lossless-Join Decomposition")
+4. Unit Name (e.g. "Plant Physiology & Bioenergetics", "Cell Biology & Molecular Genetics", "Process Synchronization & Deadlocks", "Memory Management")
+5. Specific Topic (e.g. "Photosynthesis, Chloroplasts, and Light Reactions", "Instruction Pipelining and Pipeline Hazards", "Deadlock Prevention, Avoidance, and Banker's Algorithm")
 6. Confidence (float 0.85 to 0.99)
 7. Matched Keywords (list of strings representing key concepts identified)
 8. Rationale (brief sentence explaining the concept)
 
+Do NOT force non-computer science questions into Computer Science or Data Structures and Algorithms.
 Return ONLY a valid JSON object with keys:
 "subject", "course_code", "unit_number", "unit_name", "topic", "confidence", "matched_keywords", "rationale".
 """
