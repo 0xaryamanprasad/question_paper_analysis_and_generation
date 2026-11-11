@@ -1,0 +1,81 @@
+{
+  "subject": "Mathematics - II",
+  "course_code": "23BS1004",
+  "units": [
+    {
+      "unit_number": 1,
+      "unit_name": "First Order Ordinary Differential Equations",
+      "topics": [
+        "Non-exact Differential Equations and Integrating Factors",
+        "First Order ODEs and General Solutions",
+        "Initial Value Problems and Thermal Cooling Models",
+        "Linear and Exact Differential Equations"
+      ],
+      "keywords": [
+        "differential equation", "integrating factor", "nonexact", "exact", "first order",
+        "ordinary differential equation", "ODE", "cooling", "temperature", "separable",
+        "initial value problem", "integrating factors", "general form"
+      ]
+    },
+    {
+      "unit_number": 2,
+      "unit_name": "Higher Order Linear Differential Equations",
+      "topics": [
+        "Particular Integral and Complementary Functions",
+        "Wronskian and Linear Independence",
+        "Method of Variation of Parameters",
+        "Method of Undetermined Coefficients",
+        "Power Series Solutions and Legendre Polynomials"
+      ],
+      "keywords": [
+        "particular integral", "Wronskian", "variation of parameter", "undetermined coefficients",
+        "power series solution", "Legendre", "Pn", "polynomial", "second order",
+        "complementary function", "differential equation"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "unit_name": "Vector Calculus and Theorems",
+      "topics": [
+        "Directional Derivatives and Gradient",
+        "Divergence and Curl of Vector Fields",
+        "Line Integrals and Work Done",
+        "Green's Theorem in the Plane",
+        "Multiple Integrals and Surface Regions"
+      ],
+      "keywords": [
+        "directional derivative", "divergence", "curl", "Green's theorem", "line integral",
+        "vector field", "gradient", "surface", "double integral", "multiple integral",
+        "dxdy", "region bounded", "semi-circle"
+      ]
+    },
+    {
+      "unit_number": 4,
+      "unit_name": "Complex Analysis and Mapping",
+      "topics": [
+        "Analytic Functions and Cauchy-Riemann Equations",
+        "Harmonic Functions and Laplace's Equation",
+        "Cauchy's Integral Theorem",
+        "Cauchy's Integral Formula"
+      ],
+      "keywords": [
+        "analytic", "Cauchy-Riemann", "harmonic", "Laplace's equation", "Cauchy's integral theorem",
+        "Cauchy's integral formula", "complex function", "holomorphic", "satisfy Laplace"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "unit_name": "Residue Calculus and Complex Series",
+      "topics": [
+        "Residues and Poles",
+        "Residue Theorem and Contour Integration",
+        "Laurent Series Expansion",
+        "Singularities and Complex Integration"
+      ],
+      "keywords": [
+        "residue", "residue theorem", "Laurent series", "pole", "singularity",
+        "contour integration", "complex integral", "valid for", "residues of"
+      ]
+    }
+  ]
+}

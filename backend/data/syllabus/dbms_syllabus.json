@@ -1,0 +1,74 @@
+{
+  "subject": "Database Management Systems",
+  "course_code": "CS203",
+  "units": [
+    {
+      "unit_number": 1,
+      "unit_name": "Database Architecture & ER Modeling",
+      "topics": [
+        "Three-Schema Architecture and Data Independence",
+        "Entity-Relationship (ER) and Enhanced ER (EER) Modeling",
+        "Relational Data Model and Integrity Constraints"
+      ],
+      "keywords": [
+        "database", "dbms", "er model", "entity", "relationship", "cardinality",
+        "foreign key", "primary key", "schema", "data independence", "ddl", "dml"
+      ]
+    },
+    {
+      "unit_number": 2,
+      "unit_name": "Relational Query Languages & SQL",
+      "topics": [
+        "Relational Algebra (Selection, Projection, Join, Division)",
+        "Advanced SQL (Subqueries, Joins, Group By, Having, Aggregations)",
+        "Views, Triggers, and Stored Procedures"
+      ],
+      "keywords": [
+        "relational algebra", "sql", "select", "join", "natural join", "outer join",
+        "subquery", "group by", "having", "trigger", "view", "stored procedure"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "unit_name": "Database Design & Normalization",
+      "topics": [
+        "Functional Dependencies and Closure of Attribute Sets",
+        "Normal Forms (1NF, 2NF, 3NF, BCNF)",
+        "Lossless-Join Decomposition and Dependency Preservation"
+      ],
+      "keywords": [
+        "normalization", "functional dependency", "closure", "1nf", "2nf", "3nf",
+        "bcnf", "multivalued dependency", "lossless join", "dependency preservation"
+      ]
+    },
+    {
+      "unit_number": 4,
+      "unit_name": "Transaction Management & Concurrency Control",
+      "topics": [
+        "ACID Properties and Transaction States",
+        "Serializability (Conflict and View Serializability)",
+        "Lock-Based Concurrency Control (Two-Phase Locking, Strict 2PL)",
+        "Deadlocks and Timestamp Ordering Protocols"
+      ],
+      "keywords": [
+        "transaction", "acid", "atomicity", "consistency", "isolation", "durability",
+        "serializability", "conflict serializable", "two-phase locking", "2pl",
+        "timestamp ordering", "concurrency control"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "unit_name": "Indexing, Hashing & Crash Recovery",
+      "topics": [
+        "Primary, Secondary, and Clustered Indexing",
+        "Tree-Structured Indexing (B-Trees and B+ Trees)",
+        "Static and Dynamic Hashing",
+        "Failure Recovery and Log-Based Recovery (WAL, Checkpoints)"
+      ],
+      "keywords": [
+        "indexing", "index", "b-tree", "b+ tree", "hashing", "wal", "write-ahead logging",
+        "checkpoint", "recovery", "aries", "log-based recovery"
+      ]
+    }
+  ]
+}

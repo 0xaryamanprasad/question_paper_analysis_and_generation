@@ -1,0 +1,61 @@
+# ==============================================================================
+# AI-Powered Question Paper Analysis and Generation System
+# Python Dependencies
+# ==============================================================================
+
+# --- Web Framework ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- Database ---
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.1
+psycopg2-binary==2.9.10
+
+# --- PDF Processing ---
+PyMuPDF==1.25.3
+Pillow==11.1.0
+
+# --- OCR ---
+paddlepaddle==3.0.0
+paddleocr==3.0.0
+paddlex==3.0.0
+
+# --- Image Preprocessing ---
+opencv-python-headless==4.11.0.86
+
+# --- NLP ---
+spacy==3.8.4
+
+# --- Sentence Embeddings ---
+sentence-transformers==3.4.1
+
+# --- Machine Learning ---
+scikit-learn==1.6.1
+numpy==2.2.3
+
+# --- Generative AI ---
+google-genai==1.14.0
+
+# --- PDF Generation ---
+reportlab==4.2.5
+
+# --- Configuration ---
+pydantic==2.10.6
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+
+# --- Logging ---
+structlog==24.4.0
+
+# --- Testing ---
+pytest==8.3.4
+pytest-asyncio==0.25.3
+pytest-cov==6.0.0
+httpx==0.28.1
+
+# --- Utilities ---
+aiofiles==24.1.0
+python-jose==3.3.0

@@ -1,0 +1,88 @@
+{
+  "subject": "Computer Organization and Architecture",
+  "course_code": "CS204",
+  "units": [
+    {
+      "unit_number": 1,
+      "unit_name": "Data Representation & Basic Computer Structure",
+      "topics": [
+        "Computer System Architecture, Functional Units, and Von Neumann Model",
+        "Data Representation, Number Systems, and Fixed-Point Representation",
+        "Storage Hierarchy and Data Measurement Units (Bits, Bytes, Words, Megabytes, Gigabytes)",
+        "Instruction Formats and Addressing Modes"
+      ],
+      "keywords": [
+        "gigabyte", "megabyte", "kilobyte", "terabyte", "byte", "bit", "word",
+        "data representation", "storage units", "data measurement", "meaning of a gigabyte",
+        "capacity", "von neumann", "addressing mode", "instruction format",
+        "bus structure", "accumulator", "register", "endianness", "little endian", "big endian"
+      ]
+    },
+    {
+      "unit_number": 2,
+      "unit_name": "Computer Arithmetic & ALU",
+      "topics": [
+        "ALU Architecture and Integer Arithmetic (Addition, Subtraction)",
+        "Multiplication Algorithms and Booth's Multiplication Algorithm",
+        "Division Algorithms (Restoring and Non-Restoring Division)",
+        "Floating Point Arithmetic and IEEE 754 Standard"
+      ],
+      "keywords": [
+        "booth", "booth's algorithm", "multiplication", "restoring division",
+        "non-restoring", "floating point", "ieee 754", "alu", "carry lookahead",
+        "adder", "mantissa", "exponent", "signed magnitude", "two's complement",
+        "arithmetic logic unit", "overflow", "underflow"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "unit_name": "Processor Organization & Instruction Pipelining",
+      "topics": [
+        "Control Unit Design (Hardwired vs Microprogrammed Control)",
+        "Instruction Execution Cycle and Datapath Architecture",
+        "Instruction Pipelining, Pipeline Stages, and Throughput",
+        "Pipeline Hazards (Structural, Data, and Control Hazards) and Solutions",
+        "Branch Prediction, Delayed Branching, and Superscalar Processors"
+      ],
+      "keywords": [
+        "pipelining", "pipeline", "what is pipelining", "instruction pipelining",
+        "instruction pipeline", "pipeline hazard", "data hazard", "structural hazard",
+        "control hazard", "pipeline stall", "data forwarding", "branch prediction",
+        "superscalar", "throughput", "speedup", "pipeline stage", "fetch", "decode",
+        "execute", "writeback", "control unit", "hardwired control", "microprogrammed",
+        "microinstruction", "risc", "cisc", "instruction cycle", "datapath"
+      ]
+    },
+    {
+      "unit_number": 4,
+      "unit_name": "Memory System Hierarchy & Cache Organization",
+      "topics": [
+        "Memory Hierarchy, Locality of Reference, and Performance Metrics",
+        "Cache Memory Mapping Architectures (Direct, Fully Associative, Set-Associative)",
+        "Cache Replacement Algorithms (LRU, FIFO, LFU) and Write Policies",
+        "Virtual Memory, Address Translation, and Storage Capacity"
+      ],
+      "keywords": [
+        "cache", "cache memory", "direct mapping", "associative mapping", "set associative",
+        "hit ratio", "miss penalty", "lru", "write-through", "write-back", "memory hierarchy",
+        "sram", "dram", "locality of reference", "spatial locality", "temporal locality",
+        "virtual memory", "gigabyte", "megabyte", "storage capacity", "main memory", "secondary memory"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "unit_name": "I/O Organization & System Interfacing",
+      "topics": [
+        "Input/Output Access Techniques (Programmed I/O, Interrupt-Driven I/O)",
+        "Direct Memory Access (DMA) and Bus Arbitration",
+        "Interrupt Structure, Priority Interrupts, and Daisy Chaining",
+        "Bus Structures and Interconnection Standards (PCI, USB, SCSI)"
+      ],
+      "keywords": [
+        "dma", "direct memory access", "interrupt", "bus arbitration", "daisy chaining",
+        "programmed i/o", "interrupt controller", "dma controller", "bus cycle",
+        "pci", "usb", "i/o interface", "cycle stealing", "burst mode"
+      ]
+    }
+  ]
+}

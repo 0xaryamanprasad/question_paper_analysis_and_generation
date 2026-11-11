@@ -1,0 +1,66 @@
+{
+  "template_name": "Standard End-Term Examination",
+  "institution": "University Name",
+  "total_marks": 100,
+  "duration_minutes": 180,
+  "instructions": [
+    "Answer all questions from Section A.",
+    "Answer any four questions from Section B.",
+    "Answer any two questions from Section C.",
+    "Figures to the right indicate full marks.",
+    "Assume suitable data if necessary."
+  ],
+  "sections": [
+    {
+      "name": "Section A",
+      "title": "Short Answer Questions",
+      "description": "Answer all questions",
+      "total_marks": 20,
+      "question_count": 10,
+      "marks_per_question": 2,
+      "is_compulsory": true,
+      "question_type": "short",
+      "blooms_levels": ["Remember", "Understand"],
+      "unit_coverage": "all"
+    },
+    {
+      "name": "Section B",
+      "title": "Medium Answer Questions",
+      "description": "Answer any four questions",
+      "total_marks": 40,
+      "question_count": 6,
+      "answer_count": 4,
+      "marks_per_question": 10,
+      "is_compulsory": false,
+      "question_type": "medium",
+      "blooms_levels": ["Understand", "Apply", "Analyze"],
+      "unit_coverage": "all"
+    },
+    {
+      "name": "Section C",
+      "title": "Long Answer Questions",
+      "description": "Answer any two questions",
+      "total_marks": 40,
+      "question_count": 4,
+      "answer_count": 2,
+      "marks_per_question": 20,
+      "is_compulsory": false,
+      "question_type": "long",
+      "blooms_levels": ["Analyze", "Evaluate", "Create"],
+      "unit_coverage": "all"
+    }
+  ],
+  "constraints": {
+    "min_units_covered": 4,
+    "max_questions_per_unit": 5,
+    "duplicate_similarity_threshold": 0.85,
+    "blooms_distribution": {
+      "Remember": {"min_percent": 10, "max_percent": 25},
+      "Understand": {"min_percent": 15, "max_percent": 30},
+      "Apply": {"min_percent": 20, "max_percent": 35},
+      "Analyze": {"min_percent": 15, "max_percent": 25},
+      "Evaluate": {"min_percent": 5, "max_percent": 15},
+      "Create": {"min_percent": 5, "max_percent": 15}
+    }
+  }
+}

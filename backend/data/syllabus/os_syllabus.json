@@ -1,0 +1,84 @@
+{
+  "subject": "Operating Systems",
+  "course_code": "CS202",
+  "units": [
+    {
+      "unit_number": 1,
+      "unit_name": "Process Management & CPU Scheduling",
+      "topics": [
+        "Process Concepts, Process States, and Process Control Block (PCB)",
+        "Threads, Multi-threading Models, and Context Switching",
+        "CPU Scheduling Algorithms (FCFS, SJF, SRTF, Round Robin, Priority)",
+        "Inter-Process Communication (IPC) and Shared Memory"
+      ],
+      "keywords": [
+        "process", "thread", "pcb", "context switch", "scheduling", "cpu scheduling",
+        "fcfs", "sjf", "srtf", "round robin", "priority scheduling", "turnaround time",
+        "waiting time", "ipc", "fork", "multithreading", "process state", "ready queue"
+      ]
+    },
+    {
+      "unit_number": 2,
+      "unit_name": "Process Synchronization & Deadlocks",
+      "topics": [
+        "Critical Section Problem and Peterson's Solution",
+        "Synchronization Primitives (Mutex Locks, Semaphores, Monitors)",
+        "Classical Synchronization Problems (Dining Philosophers, Readers-Writers)",
+        "Deadlock Characterization and Necessary Conditions",
+        "Deadlock Prevention, Avoidance, and Banker's Algorithm",
+        "Deadlock Detection and Recovery"
+      ],
+      "keywords": [
+        "deadlock", "banker's algorithm", "banker", "semaphore", "mutex", "critical section",
+        "synchronization", "peterson", "dining philosophers", "readers-writers", "producer-consumer",
+        "circular wait", "hold and wait", "safe state", "resource allocation graph", "rag",
+        "avoidance", "prevention", "race condition", "test and set", "binary semaphore"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "unit_name": "Memory Management",
+      "topics": [
+        "Contiguous Memory Allocation and Fragmentation",
+        "Paging Architecture, Page Tables, and Translation Lookaside Buffer (TLB)",
+        "Hierarchical, Inverted, and Hashed Page Tables",
+        "Segmentation and Combined Paged Segmentation"
+      ],
+      "keywords": [
+        "memory management", "paging", "page table", "tlb", "translation lookaside buffer",
+        "segmentation", "fragmentation", "internal fragmentation", "external fragmentation",
+        "swapping", "address translation", "base register", "limit register", "page size"
+      ]
+    },
+    {
+      "unit_number": 4,
+      "unit_name": "Virtual Memory & Page Replacement",
+      "topics": [
+        "Demand Paging, Page Faults, and Effective Access Time",
+        "Page Replacement Algorithms (FIFO, LRU, Optimal, Clock)",
+        "Belady's Anomaly and Stack Algorithms",
+        "Allocation of Frames, Thrashing, and Working Set Model"
+      ],
+      "keywords": [
+        "virtual memory", "demand paging", "page fault", "page replacement", "fifo",
+        "lru", "least recently used", "optimal page replacement", "belady's anomaly",
+        "thrashing", "working set", "page fault rate", "frame allocation", "effective access time"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "unit_name": "Storage & File Systems",
+      "topics": [
+        "File System Organization, Directory Implementation, and Allocation Methods",
+        "Free-Space Management and Inode Structures",
+        "Disk Scheduling Algorithms (FCFS, SSTF, SCAN, C-SCAN, LOOK)",
+        "RAID Levels and Fault Tolerance"
+      ],
+      "keywords": [
+        "file system", "file allocation", "inode", "directory", "disk scheduling",
+        "sstf", "scan", "c-scan", "c-look", "raid", "dma", "seek time", "rotational latency",
+        "contiguous allocation", "indexed allocation", "linked allocation"
+      ]
+    }
+  ]
+}

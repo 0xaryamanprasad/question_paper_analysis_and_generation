@@ -1,0 +1,91 @@
+{
+  "subject": "Data Structures and Algorithms",
+  "course_code": "CS201",
+  "units": [
+    {
+      "unit_number": 1,
+      "unit_name": "Introduction to Data Structures",
+      "topics": [
+        "Abstract Data Types",
+        "Arrays and their representations",
+        "Linked Lists (Singly, Doubly, Circular)",
+        "Stacks and applications",
+        "Queues and variants (Circular, Priority, Deque)"
+      ],
+      "keywords": [
+        "ADT", "array", "linked list", "singly linked", "doubly linked",
+        "circular linked list", "stack", "LIFO", "push", "pop",
+        "queue", "FIFO", "enqueue", "dequeue", "priority queue", "deque"
+      ]
+    },
+    {
+      "unit_number": 2,
+      "unit_name": "Trees",
+      "topics": [
+        "Binary Trees and traversals",
+        "Binary Search Trees",
+        "AVL Trees",
+        "B-Trees and B+ Trees",
+        "Heap and Heap Sort"
+      ],
+      "keywords": [
+        "binary tree", "BST", "traversal", "inorder", "preorder", "postorder",
+        "level order", "AVL", "rotation", "balance factor",
+        "B-tree", "B+ tree", "heap", "min-heap", "max-heap", "heapify"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "unit_name": "Graphs",
+      "topics": [
+        "Graph representations (Adjacency Matrix, Adjacency List)",
+        "Graph traversals (BFS, DFS)",
+        "Shortest path algorithms (Dijkstra, Bellman-Ford)",
+        "Minimum Spanning Tree (Prim's, Kruskal's)",
+        "Topological sorting"
+      ],
+      "keywords": [
+        "graph", "vertex", "edge", "adjacency matrix", "adjacency list",
+        "BFS", "DFS", "breadth first", "depth first", "Dijkstra",
+        "Bellman-Ford", "shortest path", "MST", "Prim", "Kruskal",
+        "topological sort", "spanning tree"
+      ]
+    },
+    {
+      "unit_number": 4,
+      "unit_name": "Sorting and Searching",
+      "topics": [
+        "Bubble Sort, Selection Sort, Insertion Sort",
+        "Merge Sort",
+        "Quick Sort",
+        "Radix Sort and Counting Sort",
+        "Linear and Binary Search",
+        "Hashing and collision resolution"
+      ],
+      "keywords": [
+        "sorting", "bubble sort", "selection sort", "insertion sort",
+        "merge sort", "quick sort", "partition", "pivot",
+        "radix sort", "counting sort", "binary search", "linear search",
+        "hashing", "hash table", "collision", "chaining", "open addressing"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "unit_name": "Algorithm Design and Analysis",
+      "topics": [
+        "Time and Space Complexity",
+        "Asymptotic notations (Big-O, Omega, Theta)",
+        "Divide and Conquer",
+        "Greedy Algorithms",
+        "Dynamic Programming",
+        "Backtracking"
+      ],
+      "keywords": [
+        "time complexity", "space complexity", "Big-O", "asymptotic",
+        "divide and conquer", "greedy", "dynamic programming",
+        "memoization", "tabulation", "backtracking", "recursion",
+        "optimal substructure", "overlapping subproblems"
+      ]
+    }
+  ]
+}

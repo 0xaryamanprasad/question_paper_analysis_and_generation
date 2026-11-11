@@ -1,0 +1,57 @@
+{
+  "levels": {
+    "Remember": {
+      "description": "Retrieve relevant knowledge from long-term memory",
+      "action_verbs": [
+        "define", "list", "state", "name", "identify", "recall",
+        "recognize", "label", "match", "select", "reproduce",
+        "memorize", "enumerate", "describe", "outline", "what is",
+        "who", "when", "where", "which"
+      ]
+    },
+    "Understand": {
+      "description": "Construct meaning from instructional messages",
+      "action_verbs": [
+        "explain", "summarize", "paraphrase", "classify", "compare",
+        "interpret", "discuss", "distinguish", "illustrate", "infer",
+        "predict", "translate", "give examples", "contrast",
+        "differentiate", "elaborate"
+      ]
+    },
+    "Apply": {
+      "description": "Carry out or use a procedure in a given situation",
+      "action_verbs": [
+        "apply", "solve", "use", "demonstrate", "implement",
+        "calculate", "compute", "execute", "perform", "show",
+        "construct", "modify", "operate", "practice", "write a program",
+        "find", "determine"
+      ]
+    },
+    "Analyze": {
+      "description": "Break material into constituent parts and detect relationships",
+      "action_verbs": [
+        "analyze", "examine", "differentiate", "organize", "attribute",
+        "compare and contrast", "deconstruct", "investigate", "categorize",
+        "dissect", "distinguish between", "derive", "prove",
+        "verify", "deduce"
+      ]
+    },
+    "Evaluate": {
+      "description": "Make judgments based on criteria and standards",
+      "action_verbs": [
+        "evaluate", "justify", "critique", "judge", "assess",
+        "argue", "defend", "support", "validate", "appraise",
+        "recommend", "prioritize", "rate", "which is better",
+        "what are the advantages"
+      ]
+    },
+    "Create": {
+      "description": "Put elements together to form a coherent whole or make an original product",
+      "action_verbs": [
+        "design", "create", "develop", "formulate", "propose",
+        "construct", "plan", "produce", "invent", "compose",
+        "devise", "build", "generate", "write", "synthesize"
+      ]
+    }
+  }
+}

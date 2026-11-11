@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaperMind Studio · Academic Examination Paper Blueprint & Analysis Platform</title>
+  <link rel="icon" type="image/png" href="/icon.png">
+  <link rel="shortcut icon" type="image/png" href="/icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f4f4f5',
+              100: '#e4e4e7',
+              200: '#d4d4d8',
+              300: '#a1a1aa',
+              400: '#71717a',
+              500: '#52525b',
+              600: '#3f3f46',
+              700: '#27272a',
+              800: '#18181b',
+              900: '#09090b',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    html {
+      font-size: 17px;
+      scroll-behavior: smooth;
+      background-color: #000000;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000000 !important;
+      color: #ededed;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Subtle OLED architectural grid pattern */
+    .oled-grid {
+      background-size: 48px 48px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    }
+
+    /* Sleek card tile: pure black surface, subtle border, turns bright white on hover */
+    .em-tile {
+      background-color: #09090b;
+      border: 1px solid #222226;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .em-tile:hover {
+      border-color: #ffffff !important;
+      box-shadow: 0 0 28px rgba(255, 255, 255, 0.16), 0 12px 32px rgba(0, 0, 0, 0.9);
+      transform: translateY(-2px);
+    }
+
+    /* Top tab navigation button */
+    .em-tab-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 12px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      color: #8e8e93;
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .em-tab-btn:hover {
+      background: #141418;
+      border-color: rgba(255, 255, 255, 0.5);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+    }
+    .em-tab-btn.active {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      font-weight: 800;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.35);
+    }
+
+    /* Primary high-contrast button */
+    .em-btn-white {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 14px;
+      border: 1px solid #ffffff;
+      background: #ffffff;
+      color: #000000;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.25);
+    }
+    .em-btn-white:hover {
+      background: #e4e4e7;
+      border-color: #ffffff;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.45);
+      transform: translateY(-1px);
+    }
+    .em-btn-white:active {
+      transform: scale(0.98);
+    }
+
+    /* Secondary dark button with white hover */
+    .em-btn-dark {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 14px;
+      border: 1px solid #27272a;
+      background: #101014;
+      color: #e4e4e7;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .em-btn-dark:hover {
+      background: #18181c;
+      border-color: #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    /* Input styling */
+    .em-input {
+      background-color: #0c0c0e;
+      border: 1px solid #27272a;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 0.95rem;
+      color: #ffffff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+      outline: none;
+    }
+    .em-input:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+    }
+    .em-input::placeholder {
+      color: #52525b;
+    }
+
+    /* Page / Tab transition animation */
+    @keyframes tabFadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .tab-animate {
+      animation: tabFadeSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Click ripple effect: glowing white ripple expanding across black elements */
+    @keyframes whiteRippleKeyframes {
+      0% {
+        width: 0px;
+        height: 0px;
+        opacity: 0.75;
+        transform: translate(-50%, -50%) scale(0);
+      }
+      100% {
+        width: 700px;
+        height: 700px;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    .white-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.3) 45%, transparent 100%);
+      pointer-events: none;
+      animation: whiteRippleKeyframes 0.55s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+      z-index: 50;
+    }
+
+    /* Custom dark scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+    ::selection {
+      background: #ffffff;
+      color: #000000;
+    }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen relative selection:bg-white selection:text-black">
+  <div id="root">
+    <!-- Initial Loading State -->
+    <div id="loading-fallback" class="min-h-screen flex items-center justify-center bg-black text-white font-mono text-sm">
+      <div class="flex items-center gap-4 p-8 rounded-2xl bg-zinc-950 border border-zinc-800 shadow-2xl">
+        <img src="/icon.png" alt="PaperMind" class="w-8 h-8 object-contain" onerror="this.src='assets/papermind_icon.png'">
+        <span class="text-white font-bold text-base tracking-wide">PaperMind Studio</span>
+        <span class="text-zinc-500">· Initializing engine...</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error('Captured Window Error:', e);
+      var fallback = document.getElementById('loading-fallback');
+      if (fallback) {
+        fallback.innerHTML = '<div style="margin:20px;padding:24px;background:#09090b;border:1px solid #ef4444;border-radius:16px;color:#fca5a5;font-family:monospace;font-size:13px;max-width:650px;"><div style="font-weight:bold;font-size:16px;color:#f87171;margin-bottom:10px;">⚠️ Interface Initialization Diagnostic</div><div>' + (e.message || 'Script execution halted') + '</div><div style="color:#71717a;margin-top:10px;font-size:12px;">Source: ' + (e.filename ? e.filename.split("/").pop() : "inline") + ':' + e.lineno + ':' + e.colno + '</div></div>';
+      }
+    });
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Direct fallback to port 8000 when opened via file:// or dev servers, avoiding NetworkError
+    const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5173' || window.location.port === '3000')
+      ? 'http://localhost:8000'
+      : '';
+
+    function App() {
+      // Global interactive white ripple effect on click
+      useEffect(() => {
+        const handleGlobalClick = (e) => {
+          const target = e.target.closest('.em-tile, .em-tab-btn, .em-btn-white, .em-btn-dark, button, .ripple-target');
+          if (!target) return;
+
+          const rect = target.getBoundingClientRect();
+          const ripple = document.createElement('span');
+          ripple.className = 'white-ripple';
+          ripple.style.left = `${e.clientX - rect.left}px`;
+          ripple.style.top = `${e.clientY - rect.top}px`;
+
+          if (getComputedStyle(target).position === 'static') {
+            target.style.position = 'relative';
+          }
+          target.style.overflow = 'hidden';
+
+          target.appendChild(ripple);
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        };
+
+        document.addEventListener('click', handleGlobalClick);
+        return () => document.removeEventListener('click', handleGlobalClick);
+      }, []);
+
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [subject, setSubject] = useState('Data Structures and Algorithms');
+
+      // Dashboard State
+      const [histData, setHistData] = useState(null);
+      const [weightData, setWeightData] = useState(null);
+
+      // Upload State
+      const [uploadFile, setUploadFile] = useState(null);
+      const [uploading, setUploading] = useState(false);
+      const [uploadRes, setUploadRes] = useState(null);
+      const [questionsList, setQuestionsList] = useState([]);
+      const [fullPageText, setFullPageText] = useState('');
+      const [extractionView, setExtractionView] = useState('questions');
+      const [uploadYear, setUploadYear] = useState('2023');
+      const [uploadSemester, setUploadSemester] = useState('Fall');
+      const [analyticsLoading, setAnalyticsLoading] = useState(false);
+      const [analyticsToast, setAnalyticsToast] = useState('');
+      const [resettingCorpus, setResettingCorpus] = useState(false);
+
+      // Generator State & Customization
+      const [genLoading, setGenLoading] = useState(false);
+      const [generatedPaper, setGeneratedPaper] = useState(null);
+      const [valReport, setValReport] = useState(null);
+      const [showRubrics, setShowRubrics] = useState(false);
+      const [courseCode, setCourseCode] = useState('BS102');
+      const [institution, setInstitution] = useState('National Institute of Technology');
+      const [examName, setExamName] = useState('B.Tech Degree End Semester Examinations');
+      const [durationHours, setDurationHours] = useState(2.0);
+      const [incorporateTrends, setIncorporateTrends] = useState(true);
+      const [avoidDuplicates, setAvoidDuplicates] = useState(true);
+      const [selectedPreset, setSelectedPreset] = useState('midterm');
+      const [showMetadataSettings, setShowMetadataSettings] = useState(false);
+
+      // Syllabus Customization State
+      const [useCustomSyllabus, setUseCustomSyllabus] = useState(false);
+      const [syllabusMode, setSyllabusMode] = useState('structured'); // 'structured' | 'text'
+      const [rawSyllabusText, setRawSyllabusText] = useState('');
+      const [customUnits, setCustomUnits] = useState([
+        {
+          id: 1,
+          unit_name: 'Supervised Learning & Linear Models',
+          topics: 'Linear Regression, Cost Functions, Gradient Descent, Normal Equation, Regularization (L1/L2 Ridge & Lasso)',
+          keywords: 'linear regression, cost function, gradient descent, regularization, Ridge, Lasso, MSE',
+        },
+        {
+          id: 2,
+          unit_name: 'Classification & Neural Networks',
+          topics: 'Logistic Regression, Multi-class Softmax, Support Vector Machines, Perceptron, Backpropagation, Activation Functions',
+          keywords: 'logistic regression, sigmoid, SVM, margin, perceptron, backpropagation, activation, ReLU',
+        },
+        {
+          id: 3,
+          unit_name: 'Tree Ensembles & Model Evaluation',
+          topics: 'Decision Trees (ID3, CART), Information Gain, Random Forests, Boosting (AdaBoost, XGBoost), Cross-Validation, ROC-AUC',
+          keywords: 'decision tree, entropy, Gini, random forest, bagging, boosting, AdaBoost, cross-validation, ROC-AUC',
+        },
+      ]);
+
+      const SYLLABUS_PRESETS = {
+        math: {
+          name: 'Mathematics-II (BS102)',
+          subject: 'Mathematics-II',
+          course_code: 'BS102',
+          units: [
+            {
+              id: 1,
+              unit_name: 'First Order ODEs & Exact Equations',
+              topics: 'First Order ODEs and General Solutions, Linear and Exact Differential Equations, Non-exact Differential Equations and Integrating Factors, Initial Value Problems and Thermal Cooling Models',
+              keywords: 'ODE, integrating factor, exactness, nonexact, initial value, cooling model',
+            },
+            {
+              id: 2,
+              unit_name: 'Higher Order Linear ODEs & Power Series',
+              topics: 'Wronskian and Linear Independence, Method of Undetermined Coefficients, Method of Variation of Parameters, Power Series Solutions and Legendre Polynomials, Particular Integral and Complementary Functions',
+              keywords: 'Wronskian, Legendre, power series, variation of parameters, undetermined coefficients, complementary function',
+            },
+            {
+              id: 3,
+              unit_name: 'Vector Calculus & Multiple Integrals',
+              topics: 'Directional Derivatives and Gradient, Divergence and Curl of Vector Fields, Green\'s Theorem in the Plane, Line Integrals and Work Done, Multiple Integrals and Surface Regions',
+              keywords: 'Green theorem, divergence, curl, line integral, double integral, gradient, surface integral',
+            },
+            {
+              id: 4,
+              unit_name: 'Complex Analysis & Analytic Functions',
+              topics: 'Analytic Functions and Cauchy-Riemann Equations, Harmonic Functions and Laplace\'s Equation, Cauchy\'s Integral Theorem, Cauchy\'s Integral Formula',
+              keywords: 'analytic, Cauchy-Riemann, harmonic, Laplace equation, contour integral, Cauchy formula',
+            },
+            {
+              id: 5,
+              unit_name: 'Residue Calculus & Series Expansions',
+              topics: 'Singularities and Complex Integration, Residues and Poles, Laurent Series Expansion',
+              keywords: 'residue, pole, Laurent series, residue theorem, singularity, contour integration',
+            },
+          ],
+        },
+        ml: {
+          name: 'Machine Learning (CS304)',
+          subject: 'Machine Learning',
+          course_code: 'CS304',
+          units: [
+            {
+              id: 1,
+              unit_name: 'Supervised Learning & Linear Models',
+              topics: 'Linear Regression, Cost Functions, Gradient Descent, Normal Equation, Polynomial Regression, Regularization (L1/L2 Ridge & Lasso)',
+              keywords: 'linear regression, cost function, gradient descent, regularization, Ridge, Lasso, MSE, convex optimization',
+            },
+            {
+              id: 2,
+              unit_name: 'Classification & Support Vector Machines',
+              topics: 'Logistic Regression, Cross-Entropy Loss, Decision Boundaries, Multi-class Softmax, Support Vector Machines, Kernel Trick',
+              keywords: 'logistic regression, cross-entropy, sigmoid, SVM, margin, hyperplane, kernel, soft margin, slack variable',
+            },
+            {
+              id: 3,
+              unit_name: 'Decision Trees & Ensemble Methods',
+              topics: 'Decision Trees (ID3, C4.5, CART), Information Gain, Gini Impurity, Bagging & Random Forests, Boosting (AdaBoost, Gradient Boosting)',
+              keywords: 'decision tree, information gain, entropy, Gini impurity, random forest, bagging, boosting, AdaBoost, ensemble',
+            },
+            {
+              id: 4,
+              unit_name: 'Deep Neural Networks & Representation',
+              topics: 'Perceptron, Multi-Layer Perceptron, Activation Functions (ReLU, Sigmoid), Backpropagation, Gradient vanishing/exploding, CNNs',
+              keywords: 'perceptron, MLP, backpropagation, activation, ReLU, gradient descent, loss, convolutional, pooling, neural network',
+            },
+          ],
+        },
+        dbms: {
+          name: 'Database Management Systems (CS204)',
+          subject: 'Database Management Systems',
+          course_code: 'CS204',
+          units: [
+            {
+              id: 1,
+              unit_name: 'Data Models & Relational Architecture',
+              topics: 'Entity-Relationship (ER) Modeling, Relational Data Model, Integrity Constraints, Relational Algebra, Relational Calculus',
+              keywords: 'ER diagram, entity, relationship, primary key, foreign key, relational algebra, selection, projection, join',
+            },
+            {
+              id: 2,
+              unit_name: 'SQL & Relational Normalization',
+              topics: 'SQL DDL/DML, Nested Queries, Aggregations, Functional Dependencies, Normal Forms (1NF, 2NF, 3NF, BCNF), Decomposition',
+              keywords: 'SQL, SELECT, JOIN, GROUP BY, functional dependency, 1NF, 2NF, 3NF, BCNF, normalization, lossless decomposition',
+            },
+            {
+              id: 3,
+              unit_name: 'Transaction & Concurrency Control',
+              topics: 'ACID Properties, Transaction States, Schedules, Conflict Serializability, Two-Phase Locking (2PL), Deadlocks',
+              keywords: 'ACID, atomicity, consistency, isolation, durability, serializability, 2PL, lock, deadlock, timestamp ordering',
+            },
+            {
+              id: 4,
+              unit_name: 'Indexing, Storage & Query Optimization',
+              topics: 'RAID, B-Trees and B+ Trees, Static & Dynamic Hashing, Query Optimization Cost Estimation',
+              keywords: 'indexing, B-tree, B+ tree, hash index, query optimization, cost estimation, file organization',
+            },
+          ],
+        },
+        os: {
+          name: 'Operating Systems (CS203)',
+          subject: 'Operating Systems',
+          course_code: 'CS203',
+          units: [
+            {
+              id: 1,
+              unit_name: 'Process & Thread Management',
+              topics: 'Process Concept, Process Control Block (PCB), Context Switching, Thread Models, Inter-Process Communication (IPC)',
+              keywords: 'process, PCB, thread, context switch, IPC, shared memory, message passing, fork, exec',
+            },
+            {
+              id: 2,
+              unit_name: 'CPU Scheduling & Synchronization',
+              topics: 'Scheduling Criteria, FCFS, SJF, Round Robin, Priority Scheduling, Critical Section, Semaphores, Mutexes',
+              keywords: 'CPU scheduling, FCFS, SJF, Round Robin, semaphore, mutex, critical section, race condition, monitor',
+            },
+            {
+              id: 3,
+              unit_name: 'Deadlocks & Virtual Memory',
+              topics: 'Deadlock Conditions, Banker Algorithm, Paging, Segmentation, Virtual Memory, Page Replacement (LRU, FIFO)',
+              keywords: 'deadlock, Banker algorithm, paging, page table, TLB, segmentation, virtual memory, page fault, LRU, FIFO',
+            },
+            {
+              id: 4,
+              unit_name: 'File Systems & Disk I/O',
+              topics: 'File Concepts, Directory Structures, Allocation Methods (Contiguous, Linked, Indexed), Disk Scheduling (SSTF, SCAN, C-SCAN)',
+              keywords: 'file system, inode, contiguous allocation, indexed allocation, disk scheduling, SSTF, SCAN, C-SCAN',
+            },
+          ],
+        },
+        dsa: {
+          name: 'Data Structures & Algorithms (CS201)',
+          subject: 'Data Structures and Algorithms',
+          course_code: 'CS201',
+          units: [
+            {
+              id: 1,
+              unit_name: 'Linear Data Structures',
+              topics: 'Abstract Data Types, Arrays, Linked Lists (Singly, Doubly, Circular), Stacks & applications, Queues & variants',
+              keywords: 'ADT, array, linked list, singly linked, doubly linked, circular linked, stack, LIFO, queue, FIFO, priority queue',
+            },
+            {
+              id: 2,
+              unit_name: 'Trees & Hierarchical Structures',
+              topics: 'Binary Trees & Traversals, Binary Search Trees, AVL Trees & Rotations, B-Trees and B+ Trees, Heaps & Heap Sort',
+              keywords: 'binary tree, BST, traversal, inorder, preorder, postorder, AVL, rotation, balance factor, B-tree, heap, heapify',
+            },
+            {
+              id: 3,
+              unit_name: 'Graphs & Network Algorithms',
+              topics: 'Graph representations (Adjacency Matrix/List), BFS, DFS, Dijkstra, Bellman-Ford, Prim, Kruskal, Topological Sort',
+              keywords: 'graph, vertex, edge, adjacency matrix, BFS, DFS, Dijkstra, Bellman-Ford, MST, Prim, Kruskal, topological sort',
+            },
+            {
+              id: 4,
+              unit_name: 'Sorting, Searching & Hashing',
+              topics: 'Bubble, Selection, Insertion Sort, Merge Sort, Quick Sort, Binary Search, Hash Tables & Collision Resolution',
+              keywords: 'sorting, bubble sort, merge sort, quick sort, partition, binary search, hashing, hash table, collision, chaining',
+            },
+            {
+              id: 5,
+              unit_name: 'Algorithm Design & Complexity',
+              topics: 'Asymptotic Notations (Big-O, Omega, Theta), Divide & Conquer, Greedy Algorithms, Dynamic Programming, Backtracking',
+              keywords: 'time complexity, Big-O, asymptotic, divide and conquer, greedy, dynamic programming, memoization, backtracking',
+            },
+          ],
+        },
+      };
+
+      const [sections, setSections] = useState([
+        {
+          id: 1,
+          section_name: 'Part A',
+          description: '',
+          question_count: 5,
+          questions_to_attempt: 5,
+          marks_per_question: 2.0,
+          allowed_question_types: ['short'],
+          has_internal_choice: false,
+          unit_coverage: [],
+        },
+        {
+          id: 2,
+          section_name: 'Part B',
+          description: '',
+          question_count: 4,
+          questions_to_attempt: 4,
+          marks_per_question: 10.0,
+          allowed_question_types: ['long'],
+          has_internal_choice: true,
+          unit_coverage: [],
+        },
+      ]);
+
+      const PRESETS = {
+        endsem: {
+          name: 'End-Semester (100M, 3h)',
+          duration: 3.0,
+          sections: [
+            {
+              id: 1,
+              section_name: 'Part A',
+              description: '',
+              question_count: 10,
+              questions_to_attempt: 10,
+              marks_per_question: 2.0,
+              allowed_question_types: ['short'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 2,
+              section_name: 'Part B',
+              description: '',
+              question_count: 5,
+              questions_to_attempt: 5,
+              marks_per_question: 16.0,
+              allowed_question_types: ['long'],
+              has_internal_choice: true,
+              unit_coverage: [],
+            },
+          ],
+        },
+        midterm: {
+          name: 'Mid-Term Exam (50M, 2h)',
+          duration: 2.0,
+          sections: [
+            {
+              id: 1,
+              section_name: 'Part A',
+              description: '',
+              question_count: 5,
+              questions_to_attempt: 5,
+              marks_per_question: 2.0,
+              allowed_question_types: ['short'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 2,
+              section_name: 'Part B',
+              description: '',
+              question_count: 4,
+              questions_to_attempt: 4,
+              marks_per_question: 10.0,
+              allowed_question_types: ['long'],
+              has_internal_choice: true,
+              unit_coverage: [],
+            },
+          ],
+        },
+        threetier: {
+          name: '3-Tier Exam (75M, 3h)',
+          duration: 3.0,
+          sections: [
+            {
+              id: 1,
+              section_name: 'Section A (Objective & Short)',
+              description: '',
+              question_count: 10,
+              questions_to_attempt: 10,
+              marks_per_question: 1.0,
+              allowed_question_types: ['short', 'mcq'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 2,
+              section_name: 'Section B (Conceptual)',
+              description: '',
+              question_count: 5,
+              questions_to_attempt: 5,
+              marks_per_question: 5.0,
+              allowed_question_types: ['medium'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 3,
+              section_name: 'Section C (Analytical & Problems)',
+              description: '',
+              question_count: 4,
+              questions_to_attempt: 4,
+              marks_per_question: 10.0,
+              allowed_question_types: ['long', 'numerical'],
+              has_internal_choice: true,
+              unit_coverage: [],
+            },
+          ],
+        },
+        choice: {
+          name: 'Choice Pattern: Answer 5 of 8 (50M)',
+          duration: 2.0,
+          sections: [
+            {
+              id: 1,
+              section_name: 'Part A',
+              description: '',
+              question_count: 5,
+              questions_to_attempt: 5,
+              marks_per_question: 2.0,
+              allowed_question_types: ['short'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 2,
+              section_name: 'Part B',
+              description: '',
+              question_count: 8,
+              questions_to_attempt: 5,
+              marks_per_question: 8.0,
+              allowed_question_types: ['long'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+          ],
+        },
+        quiz: {
+          name: 'Unit Quiz / Test (25M, 1h)',
+          duration: 1.0,
+          sections: [
+            {
+              id: 1,
+              section_name: 'Part A (Quick Recall)',
+              description: '',
+              question_count: 5,
+              questions_to_attempt: 5,
+              marks_per_question: 1.0,
+              allowed_question_types: ['mcq', 'short'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+            {
+              id: 2,
+              section_name: 'Part B (Descriptive)',
+              description: '',
+              question_count: 4,
+              questions_to_attempt: 4,
+              marks_per_question: 5.0,
+              allowed_question_types: ['medium'],
+              has_internal_choice: false,
+              unit_coverage: [],
+            },
+          ],
+        },
+      };
+
+      const applyPreset = (key) => {
+        setSelectedPreset(key);
+        if (PRESETS[key]) {
+          setDurationHours(PRESETS[key].duration);
+          setSections(PRESETS[key].sections.map(s => ({ ...s, id: Math.random() })));
+        }
+      };
+
+      const addSection = () => {
+        setSelectedPreset('custom');
+        const nextChar = String.fromCharCode(65 + sections.length);
+        const newSec = {
+          id: Date.now(),
+          section_name: `Part ${nextChar}`,
+          description: '',
+          question_count: 4,
+          questions_to_attempt: 4,
+          marks_per_question: 5.0,
+          allowed_question_types: ['medium'],
+          has_internal_choice: false,
+          unit_coverage: [],
+        };
+        setSections([...sections, newSec]);
+      };
+
+      const removeSection = (id) => {
+        if (sections.length <= 1) {
+          alert('A question paper must have at least one section.');
+          return;
+        }
+        setSelectedPreset('custom');
+        setSections(sections.filter(s => s.id !== id));
+      };
+
+      const updateSection = (id, field, value) => {
+        setSelectedPreset('custom');
+        setSections(sections.map(s => s.id === id ? { ...s, [field]: value } : s));
+      };
+
+      const moveSection = (index, direction) => {
+        setSelectedPreset('custom');
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= sections.length) return;
+        const newSecs = [...sections];
+        const temp = newSecs[index];
+        newSecs[index] = newSecs[targetIndex];
+        newSecs[targetIndex] = temp;
+        setSections(newSecs);
+      };
+
+      const toggleQuestionType = (secId, type) => {
+        setSelectedPreset('custom');
+        setSections(sections.map(s => {
+          if (s.id !== secId) return s;
+          const current = s.allowed_question_types || [];
+          if (current.includes(type)) {
+            if (current.length === 1) return s; // Keep at least one type
+            return { ...s, allowed_question_types: current.filter(t => t !== type) };
+          } else {
+            return { ...s, allowed_question_types: [...current, type] };
+          }
+        }));
+      };
+
+      const toggleUnitCoverage = (secId, unitNumber) => {
+        setSelectedPreset('custom');
+        setSections(sections.map(s => {
+          if (s.id !== secId) return s;
+          const current = s.unit_coverage || [];
+          if (current.includes(unitNumber)) {
+            return { ...s, unit_coverage: current.filter(u => u !== unitNumber) };
+          } else {
+            return { ...s, unit_coverage: [...current, unitNumber].sort((a, b) => a - b) };
+          }
+        }));
+      };
+
+      const calculatedTotalMarks = sections.reduce((sum, s) => {
+        const attempt = s.questions_to_attempt ? parseInt(s.questions_to_attempt, 10) : parseInt(s.question_count, 10);
+        return sum + (attempt * parseFloat(s.marks_per_question || 0));
+      }, 0);
+
+      const calculatedTotalQuestions = sections.reduce((sum, s) => {
+        return sum + parseInt(s.question_count || 0, 10);
+      }, 0);
+
+      const addCustomUnit = () => {
+        const nextNum = customUnits.length + 1;
+        setCustomUnits([
+          ...customUnits,
+          {
+            id: Date.now(),
+            unit_name: `Unit ${nextNum}: New Unit Title`,
+            topics: '',
+            keywords: '',
+          },
+        ]);
+      };
+
+      const removeCustomUnit = (id) => {
+        if (customUnits.length <= 1) {
+          alert('You must have at least one unit in the syllabus.');
+          return;
+        }
+        setCustomUnits(customUnits.filter(u => u.id !== id));
+      };
+
+      const updateCustomUnit = (id, field, value) => {
+        setCustomUnits(customUnits.map(u => u.id === id ? { ...u, [field]: value } : u));
+      };
+
+      const applySyllabusPreset = (presetKey) => {
+        const p = SYLLABUS_PRESETS[presetKey];
+        if (!p) return;
+        setSubject(p.subject);
+        setCourseCode(p.course_code);
+        setCustomUnits(p.units.map(u => ({ ...u, id: Math.random() })));
+        setUseCustomSyllabus(true);
+      };
+
+      const parseSyllabusFromText = () => {
+        if (!rawSyllabusText.trim()) {
+          alert('Please enter or paste your syllabus text first.');
+          return;
+        }
+
+        const lines = rawSyllabusText.split('\n');
+        const parsedUnits = [];
+        let currentUnit = null;
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+
+          const unitMatch = trimmed.match(/^(?:###\s*)?(?:unit|module|chapter|part)\s*(\d+)[\s*:\-–—]+(.*)$/i) ||
+                            trimmed.match(/^(\d+)[\.\)]\s+(.*)$/);
+
+          if (unitMatch) {
+            if (currentUnit) parsedUnits.push(currentUnit);
+            currentUnit = {
+              id: Date.now() + Math.random(),
+              unit_name: unitMatch[2] ? unitMatch[2].trim() : `Unit ${unitMatch[1]}`,
+              topics: '',
+              keywords: '',
+            };
+          } else if (currentUnit) {
+            if (!currentUnit.topics) {
+              currentUnit.topics = trimmed;
+            } else {
+              currentUnit.topics += ', ' + trimmed;
+            }
+          } else {
+            currentUnit = {
+              id: Date.now() + Math.random(),
+              unit_name: 'Unit 1: ' + trimmed,
+              topics: '',
+              keywords: '',
+            };
+          }
+        }
+
+        if (currentUnit) parsedUnits.push(currentUnit);
+
+        if (parsedUnits.length === 0) {
+          alert('Could not detect units. Try formatting with "Unit 1: Name" or "1. Name".');
+          return;
+        }
+
+        parsedUnits.forEach(u => {
+          if (u.topics) {
+            const words = u.topics
+              .split(/[,;\n]+/)
+              .map(w => w.trim())
+              .filter(w => w.length > 3);
+            u.keywords = Array.from(new Set(words)).slice(0, 8).join(', ');
+          }
+        });
+
+        setCustomUnits(parsedUnits);
+        setSyllabusMode('structured');
+        setUseCustomSyllabus(true);
+      };
+
+      // Playground State
+      const [playPrompt, setPlayPrompt] = useState('Explain deadlock prevention and avoidance using Banker\'s algorithm and resource allocation graphs.');
+      const [clfResult, setClfResult] = useState(null);
+      const [clfLoading, setClfLoading] = useState(false);
+      const [playSubject, setPlaySubject] = useState('auto');
+
+      useEffect(() => {
+        // Auto-detect existing uploaded paper subject on mount
+        fetch(`${API_BASE}/api/v1/papers`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data && data.papers && data.papers.length > 0) {
+              const latest = data.papers[0];
+              if (latest.subject) {
+                setSubject(latest.subject);
+                if (latest.subject.toLowerCase().includes('math')) {
+                  setCourseCode('BS102');
+                  setCustomUnits(SYLLABUS_PRESETS.math.units);
+                }
+              }
+            }
+          })
+          .catch(() => {});
+      }, []);
+
+      useEffect(() => {
+        loadAnalytics(false);
+      }, [subject]);
+
+      const loadAnalytics = async (isManual = false) => {
+        setAnalyticsLoading(true);
+        if (isManual) setAnalyticsToast('Refreshing analytics from server...');
+        try {
+          const [hRes, wRes] = await Promise.all([
+            fetch(`${API_BASE}/api/v1/analysis/historical?subject=${encodeURIComponent(subject)}`).then(async r => {
+              if (!r.ok) {
+                const text = await r.text();
+                throw new Error(`Historical API error (HTTP ${r.status}): ${text}`);
+              }
+              return r.json();
+            }),
+            fetch(`${API_BASE}/api/v1/analysis/weightage?subject=${encodeURIComponent(subject)}`).then(async r => {
+              if (!r.ok) {
+                const text = await r.text();
+                throw new Error(`Weightage API error (HTTP ${r.status}): ${text}`);
+              }
+              return r.json();
+            }),
+          ]);
+          setHistData(hRes);
+          setWeightData(wRes);
+          const count = hRes?.total_papers_analyzed || 0;
+          const qCount = hRes?.total_questions_analyzed || hRes?.total_questions || 0;
+          if (count > 0) {
+            setAnalyticsToast(`✓ Ingested Intelligence: ${count} paper(s) and ${qCount} question(s) indexed for "${subject}"`);
+          } else {
+            setAnalyticsToast(`ℹ Context is clean (0 papers indexed for "${subject}"). Ready to upload new papers.`);
+          }
+        } catch (e) {
+          console.error('Analytics load error:', e);
+          setAnalyticsToast(`⚠️ Server offline or connection error: ${e.message}`);
+          if (isManual) {
+            alert(`Failed to sync intelligence from backend:\n${e.message}\n\nPlease verify that the backend server is running on port 8000.`);
+          }
+        } finally {
+          setAnalyticsLoading(false);
+        }
+      };
+
+      const handleResetCorpus = async (clearAll = false) => {
+        const targetSubject = clearAll ? 'ALL subjects across the entire platform' : `"${subject}"`;
+        const confirmed = window.confirm(
+          `RESET INTELLIGENCE CONTEXT?\n\n` +
+          `This will completely wipe previously uploaded PDF papers, extracted OCR text, and questions for ${targetSubject}.\n\n` +
+          `• Total papers analyzed will reset to 0.\n` +
+          `• The app's memory will be wiped clean so it can learn fresh for another subject.\n\n` +
+          `Do you want to proceed?`
+        );
+        if (!confirmed) return;
+
+        setResettingCorpus(true);
+        setAnalyticsToast('Wiping context and removing uploaded papers...');
+        try {
+          const url = clearAll
+            ? `${API_BASE}/api/v1/papers/reset?all_data=true`
+            : `${API_BASE}/api/v1/papers/reset?subject=${encodeURIComponent(subject)}`;
+
+          const res = await fetch(url, { method: 'DELETE' }).then(async r => {
+            if (!r.ok) {
+              const text = await r.text();
+              throw new Error(`Reset failed (HTTP ${r.status}): ${text}`);
+            }
+            return r.json();
+          });
+
+          // Reset all local UI states to 0
+          setHistData(null);
+          setWeightData(null);
+          setQuestionsList([]);
+          setUploadRes(null);
+          setUploadFile(null);
+          setAnalyticsToast(`✓ Intelligence context reset: ${res.deleted_count || 0} paper(s) removed. Ready for new subject.`);
+          await loadAnalytics(false);
+        } catch (err) {
+          console.error('Reset error:', err);
+          alert('Failed to reset corpus: ' + err.message);
+          setAnalyticsToast(`⚠️ Reset failed: ${err.message}`);
+        } finally {
+          setResettingCorpus(false);
+        }
+      };
+
+      const handleUpload = async (e) => {
+        e.preventDefault();
+        if (!uploadFile) return;
+        setUploading(true);
+        try {
+          const fd = new FormData();
+          fd.append('file', uploadFile);
+          fd.append('subject', subject);
+          fd.append('year', uploadYear || '2023');
+          fd.append('semester', uploadSemester || 'Fall');
+
+          const res = await fetch(`${API_BASE}/api/v1/papers/upload`, { method: 'POST', body: fd }).then(async r => {
+            const text = await r.text();
+            if (!r.ok) {
+              try {
+                const errJson = JSON.parse(text);
+                throw new Error(errJson.detail || text);
+              } catch (e) {
+                throw new Error(text || `Server error (HTTP ${r.status})`);
+              }
+            }
+            return JSON.parse(text);
+          });
+          setUploadRes(res);
+          const qData = await fetch(`${API_BASE}/api/v1/papers/${res.id}/questions`).then(r => r.ok ? r.json() : []);
+          setQuestionsList(qData);
+          try {
+            const txtRes = await fetch(`${API_BASE}/api/v1/papers/${res.id}/text`).then(r => r.ok ? r.json() : null);
+            if (txtRes && txtRes.full_structured_text) {
+              setFullPageText(txtRes.full_structured_text);
+            }
+          } catch (_) {}
+          if (res.subject) {
+            setSubject(res.subject);
+            if (res.subject.toLowerCase().includes('math')) {
+              setCourseCode('BS102');
+              setCustomUnits(SYLLABUS_PRESETS.math.units);
+            }
+          }
+          loadAnalytics(false);
+        } catch (err) {
+          alert('Upload failed: ' + err.message);
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      const handleGenerate = async () => {
+        setGenLoading(true);
+        setGeneratedPaper(null);
+        setValReport(null);
+        try {
+          const bp = {
+            subject,
+            course_code: courseCode,
+            total_marks: calculatedTotalMarks,
+            duration_hours: parseFloat(durationHours),
+            institution_name: institution,
+            examination_name: examName,
+            sections: sections.map(s => {
+              const qCount = parseInt(s.question_count, 10) || 1;
+              const qAttempt = s.questions_to_attempt ? parseInt(s.questions_to_attempt, 10) : qCount;
+              const marksPerQ = parseFloat(s.marks_per_question) || 1.0;
+              let desc = s.description;
+              if (!desc || !desc.trim()) {
+                if (qAttempt < qCount) {
+                  desc = `Answer any ${qAttempt} questions out of ${qCount}. (${qAttempt} x ${marksPerQ} = ${qAttempt * marksPerQ} Marks)`;
+                } else if (s.has_internal_choice) {
+                  desc = `Answer ALL questions. Each question has an internal choice. (${qCount} x ${marksPerQ} = ${qCount * marksPerQ} Marks)`;
+                } else {
+                  desc = `Answer ALL questions. (${qCount} x ${marksPerQ} = ${qCount * marksPerQ} Marks)`;
+                }
+              }
+              return {
+                section_name: s.section_name || 'Section',
+                description: desc,
+                question_count: qCount,
+                questions_to_attempt: qAttempt,
+                marks_per_question: marksPerQ,
+                allowed_question_types: s.allowed_question_types && s.allowed_question_types.length > 0 ? s.allowed_question_types : ['medium'],
+                has_internal_choice: !!s.has_internal_choice,
+                unit_coverage: s.unit_coverage && s.unit_coverage.length > 0 ? s.unit_coverage : null,
+              };
+            }),
+            incorporate_historical_trends: incorporateTrends,
+            avoid_recent_duplicates: avoidDuplicates,
+          };
+
+          let syllabusPayload = null;
+          if (useCustomSyllabus && customUnits.length > 0) {
+            syllabusPayload = {
+              subject: subject || 'Custom Course',
+              course_code: courseCode || null,
+              units: customUnits.map((u, idx) => ({
+                unit_number: idx + 1,
+                unit_name: u.unit_name || `Unit ${idx + 1}`,
+                topics: (Array.isArray(u.topics) ? u.topics : (u.topics || '').split(','))
+                  .map(t => t.trim())
+                  .filter(Boolean),
+                keywords: (Array.isArray(u.keywords) ? u.keywords : (u.keywords || '').split(','))
+                  .map(k => k.trim())
+                  .filter(Boolean),
+              })),
+            };
+          }
+
+          const pRes = await fetch(`${API_BASE}/api/v1/generation/generate-paper`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ blueprint: bp, syllabus: syllabusPayload }),
+          }).then(async r => {
+            if (!r.ok) {
+              const err = await r.json();
+              throw new Error(err.detail || 'Paper generation failed');
+            }
+            return r.json();
+          });
+
+          setGeneratedPaper(pRes);
+
+          const vRes = await fetch(`${API_BASE}/api/v1/generation/validate-paper`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paper: pRes, blueprint: bp, syllabus: syllabusPayload }),
+          }).then(r => r.json());
+
+          setValReport(vRes);
+        } catch (e) {
+          alert('Generation error: ' + (e.message || e));
+        } finally {
+          setGenLoading(false);
+        }
+      };
+
+      const handleDownloadPDF = async () => {
+        if (!generatedPaper) return;
+        const res = await fetch(`${API_BASE}/api/v1/generation/render-pdf`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(generatedPaper),
+        });
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${subject.replace(/\s+/g, '_').toLowerCase()}_exam_paper.pdf`;
+        a.click();
+      };
+
+      const handleClassify = async () => {
+        setClfLoading(true);
+        try {
+          const res = await fetch(`${API_BASE}/api/v1/analysis/classify-question`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question_text: playPrompt, subject: playSubject || 'auto' }),
+          }).then(r => r.json());
+          setClfResult(res);
+        } catch (e) {
+          alert('Classification failed: ' + e);
+        } finally {
+          setClfLoading(false);
+        }
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col bg-black text-white relative overflow-x-hidden selection:bg-white selection:text-black font-sans">
+          {/* Subtle 48px Engineering Grid Lines */}
+          <div className="fixed inset-0 pointer-events-none oled-grid z-0 opacity-60"></div>
+
+          {/* Top Navigation Bar: Scaled Larger, Pure Black with White Elements */}
+          <header className="sticky top-0 z-40 backdrop-blur-2xl bg-black/85 border-b border-zinc-800/80">
+            <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between gap-6">
+              {/* Left Brand: Emblem + Title + Version Tag */}
+              <div
+                className="flex items-center gap-3.5 cursor-pointer group shrink-0"
+                onClick={() => setActiveTab('dashboard')}
+              >
+                <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-lg shadow-blue-500/10 transition-transform group-hover:scale-105 overflow-hidden p-1 shrink-0">
+                  <img
+                    src="/icon.png"
+                    alt="PaperMind"
+                    className="w-full h-full object-contain filter drop-shadow"
+                    onError={(e) => { e.target.src = 'assets/papermind_icon.png'; }}
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-extrabold text-white text-xl sm:text-2xl tracking-tight font-sans">PaperMind</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold text-black bg-white border border-white">
+                      Studio v2.4
+                    </span>
+                  </div>
+                  <div className="text-xs text-zinc-400 font-medium hidden sm:block">
+                    Understand Papers. Predict Patterns. Create Exams.
+                  </div>
+                </div>
+              </div>
+
+              {/* Center Navigation Tabs: White Highlight on Hover & Solid White when Active */}
+              <nav className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`em-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <span>Intelligence</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('upload')}
+                  className={`em-tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <span>Ingestion</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('generate')}
+                  className={`em-tab-btn ${activeTab === 'generate' ? 'active' : ''}`}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  <span>Paper Studio</span>
+                  <span className={`hidden md:inline-block px-2 py-0.5 rounded text-[11px] font-mono font-bold ${activeTab === 'generate' ? 'bg-black text-white' : 'bg-zinc-800 text-zinc-300'}`}>
+                    Syllabus
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('playground')}
+                  className={`em-tab-btn ${activeTab === 'playground' ? 'active' : ''}`}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  <span>NLP Lab</span>
+                </button>
+              </nav>
+
+              {/* Right Active Subject Badge */}
+              <div className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-300 font-mono text-sm hover:border-white transition-all cursor-default">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="font-bold text-white">{courseCode}</span>
+                <span className="text-zinc-600">·</span>
+                <span className="truncate max-w-[150px] text-zinc-300">{subject}</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content Area: Scaled Up, Pure Black with White Hover Highlight on Tiles */}
+          <main className="grow max-w-[1400px] w-full mx-auto px-6 py-10 z-10">
+            {/* TAB 1: ANALYTICS & INTELLIGENCE */}
+            {activeTab === 'dashboard' && (
+              <div key="tab-dashboard" className="tab-animate space-y-8">
+                {/* Hero Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-800">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-mono font-bold border border-white/20">
+                      <span>⚡</span>
+                      <span>ANALYTICS ENGINE</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                      Examination Historical Intelligence
+                    </h1>
+                    <p className="text-base text-zinc-400 max-w-3xl">
+                      Longitudinal syllabus topic recurrence, Bloom's cognitive taxonomy distribution, and unit weightage analytics calculated using dense lexical and semantic vectors.
+                    </p>
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className="text-xs font-mono text-zinc-500">Active Subject:</span>
+                      <span className="px-2.5 py-0.5 rounded-lg bg-zinc-900 border border-zinc-700 text-xs font-bold text-white font-mono">
+                        {subject}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => loadAnalytics(true)}
+                      disabled={analyticsLoading}
+                      className="em-btn-secondary shrink-0 flex items-center gap-2.5 !py-3 !px-5 disabled:opacity-50"
+                      title="Re-calculate analytics on existing uploaded papers without deleting"
+                    >
+                      <span className={`text-base ${analyticsLoading ? 'animate-spin' : ''}`}>↻</span>
+                      <span>{analyticsLoading ? 'Syncing...' : 'Sync Analytics'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleResetCorpus(false)}
+                      disabled={resettingCorpus}
+                      className="em-btn-white shrink-0 flex items-center gap-2.5 !py-3 !px-6 shadow-[0_0_20px_rgba(255,255,255,0.25)] disabled:opacity-50"
+                      title="Wipe previous PDF papers and reset intelligence to 0 so the app can learn fresh for a new subject"
+                    >
+                      <span className="text-base">🗑</span>
+                      <span>{resettingCorpus ? 'Clearing Corpus...' : 'Reset & Start Fresh'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {analyticsToast && (
+                  <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-700 text-xs font-mono text-zinc-200 flex items-center justify-between">
+                    <span>{analyticsToast}</span>
+                    <button onClick={() => setAnalyticsToast('')} className="text-zinc-400 hover:text-white ml-3 text-sm">✕</button>
+                  </div>
+                )}
+
+                {/* Hero KPI Stats Grid: Scaled Up Black Tiles with White Glow on Hover */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="em-tile p-6 sm:p-7">
+                    <div className="flex justify-between items-start">
+                      <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase font-mono">Analyzed Papers</span>
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-white text-black">PDF Ingest</span>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-extrabold text-white mt-4 font-mono">
+                      {histData?.total_papers_analyzed || 0}
+                    </div>
+                    <span className="text-xs text-zinc-500 block mt-2">
+                      Years: {histData?.years_covered?.join(', ') || 'None in corpus'}
+                    </span>
+                  </div>
+
+                  <div className="em-tile p-6 sm:p-7">
+                    <div className="flex justify-between items-start">
+                      <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase font-mono">Question Corpus</span>
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-white border border-zinc-700">NLP Indexed</span>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-extrabold text-white mt-4 font-mono">
+                      {histData?.total_questions || 0}
+                    </div>
+                    <span className="text-xs text-zinc-500 block mt-2">
+                      Vectorized & Tagged
+                    </span>
+                  </div>
+
+                  <div className="em-tile p-6 sm:p-7">
+                    <div className="flex justify-between items-start">
+                      <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase font-mono">Recurrence Rate</span>
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-white/10 text-white border border-white/20">Repetition</span>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-extrabold text-white mt-4 font-mono">
+                      {histData?.overall_repetition_rate || 0}%
+                    </div>
+                    <span className="text-xs text-zinc-500 block mt-2">
+                      Longitudinal repeat index
+                    </span>
+                  </div>
+
+                  <div className="em-tile p-6 sm:p-7">
+                    <div className="flex justify-between items-start">
+                      <span className="text-xs font-bold tracking-wider text-zinc-400 uppercase font-mono">Exam Marks Avg</span>
+                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-white border border-zinc-700">Baseline</span>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-extrabold text-white mt-4 font-mono">
+                      {weightData?.average_paper_total_marks || 0}m
+                    </div>
+                    <span className="text-xs text-zinc-500 block mt-2">
+                      Target blueprint baseline
+                    </span>
+                  </div>
+                </div>
+
+                {/* Unit Weightages & Blooms Spectrum */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Unit-wise Weightage Window Card */}
+                  <div className="em-tile">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-zinc-300 ml-2">unit_weightages.json</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-white px-2.5 py-0.5 rounded-full bg-zinc-800 border border-zinc-700">5 Units</span>
+                    </div>
+
+                    <div className="p-6 sm:p-7 space-y-6">
+                      <div>
+                        <h2 className="text-lg font-bold text-white">Unit-wise Marks Weightage Distribution</h2>
+                        <span className="text-xs text-zinc-400">Historical allocation percentage across syllabus units</span>
+                      </div>
+
+                      <div className="space-y-4 pt-1">
+                        {weightData?.unit_weightages && weightData.unit_weightages.length > 0 ? (
+                          weightData.unit_weightages.map(u => (
+                            <div key={u.unit_number} className="space-y-2">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="font-medium text-zinc-200 truncate max-w-[280px]">
+                                  <b className="text-white font-mono mr-2">U{u.unit_number}</b> {u.unit_name}
+                                </span>
+                                <span className="font-mono font-bold text-white">
+                                  {u.weightage_percentage}% <span className="text-xs font-normal text-zinc-500">({u.total_marks}m)</span>
+                                </span>
+                              </div>
+                              <div className="w-full bg-zinc-900 rounded-full h-3 overflow-hidden border border-zinc-800">
+                                <div
+                                  className="bg-white h-3 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+                                  style={{ width: `${Math.min(u.weightage_percentage, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-12 text-center text-sm text-zinc-500">
+                            Upload previous year papers to populate unit weightage analytics.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bloom's Taxonomy Cognitive Spectrum Window Card */}
+                  <div className="em-tile">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-zinc-300 ml-2">blooms_taxonomy.json</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-white px-2.5 py-0.5 rounded-full bg-zinc-800 border border-zinc-700">Taxonomy Matrix</span>
+                    </div>
+
+                    <div className="p-6 sm:p-7 space-y-6">
+                      <div>
+                        <h2 className="text-lg font-bold text-white">Bloom's Cognitive Spectrum (L1 - L6)</h2>
+                        <span className="text-xs text-zinc-400">Rigor assessment across Bloom's Revised Taxonomy levels</span>
+                      </div>
+
+                      <div className="space-y-3.5 pt-1">
+                        {[
+                          { lvl: 'Remember', num: 'L1', desc: 'Recall & State' },
+                          { lvl: 'Understand', num: 'L2', desc: 'Explain & Interpret' },
+                          { lvl: 'Apply', num: 'L3', desc: 'Implement & Execute' },
+                          { lvl: 'Analyze', num: 'L4', desc: 'Differentiate & Contrast' },
+                          { lvl: 'Evaluate', num: 'L5', desc: 'Justify & Appraise' },
+                          { lvl: 'Create', num: 'L6', desc: 'Design & Synthesize' },
+                        ].map(item => {
+                          const count = histData?.blooms_distribution?.[item.lvl] || 0;
+                          const total = histData?.total_questions || 1;
+                          const pct = Math.round((count / (total || 1)) * 100);
+
+                          return (
+                            <div key={item.lvl} className="space-y-1.5">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="flex items-center gap-2 text-zinc-200 font-medium">
+                                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-zinc-900 font-bold text-white border border-zinc-800">
+                                    {item.num}
+                                  </span>
+                                  <span>{item.lvl}</span>
+                                  <span className="text-xs text-zinc-500 italic">({item.desc})</span>
+                                </span>
+                                <span className="font-mono font-bold text-white">
+                                  {pct}% <span className="text-xs font-normal text-zinc-500">({count} Qs)</span>
+                                </span>
+                              </div>
+                              <div className="w-full bg-zinc-900 rounded-full h-3 overflow-hidden border border-zinc-800">
+                                <div
+                                  className="bg-white h-3 rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+                                  style={{ width: `${Math.min(pct, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hot Topics & Recurrence Trajectories Window Card */}
+                <div className="em-tile">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                      </div>
+                      <span className="font-mono text-xs font-bold text-zinc-300 ml-2">trend_trajectories.json</span>
+                    </div>
+                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white text-black font-mono font-bold">
+                      🔥 Top Repeated
+                    </span>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-6">
+                    <div>
+                      <h2 className="text-lg font-bold text-white">High-Recurrence Historical Topics</h2>
+                      <span className="text-xs text-zinc-400">Topics identified with strong historical examination presence across corpus papers</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {histData?.top_repeated_topics && histData.top_repeated_topics.length > 0 ? (
+                        histData.top_repeated_topics.map((t, idx) => (
+                          <div
+                            key={idx}
+                            className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-start justify-between gap-4 hover:border-white transition-all shadow-sm"
+                          >
+                            <div>
+                              <span className="font-mono text-xs font-bold text-white uppercase block mb-1">
+                                Rank #{idx + 1}
+                              </span>
+                              <span className="text-sm font-bold text-zinc-100 block">
+                                {t}
+                              </span>
+                              <span className="text-xs text-zinc-500 mt-2 block">
+                                Recurrence: High Frequency
+                              </span>
+                            </div>
+                            <span className="px-2.5 py-1 text-xs font-black rounded-full bg-white text-black shrink-0 font-mono">
+                              HOT
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-full py-12 text-center text-sm text-zinc-500">
+                          No recurring topics indexed yet. Upload question papers to start computing trends.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: INGESTION & OCR EXTRACTION */}
+            {activeTab === 'upload' && (
+              <div key="tab-upload" className="tab-animate space-y-8">
+                {/* Hero Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-800">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-mono font-bold border border-white/20">
+                      <span>📄</span>
+                      <span>OPTICAL INGESTION</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                      Exam Paper Ingestion & OCR Scanner
+                    </h1>
+                    <p className="text-base text-zinc-400 max-w-3xl">
+                      Dual-stream extraction pipeline combining digital text parsing with PaddleOCR PP-OCRv5 for scanned historical examination papers and LaTeX-embedded formulas.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleResetCorpus(false)}
+                      disabled={resettingCorpus}
+                      className="em-btn-secondary flex items-center gap-2 text-xs py-2.5 px-4 border border-zinc-700 hover:border-red-500 hover:text-red-300"
+                      title="Wipe previous papers for this subject so you can start fresh"
+                    >
+                      <span className="text-sm">🗑</span>
+                      <span>Reset Subject Corpus ({histData?.total_papers_analyzed || 0} papers)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Upload Form Window Card */}
+                  <div className="em-tile">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-zinc-300 ml-2">paper_uploader.py</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-black px-2.5 py-0.5 rounded-full bg-white">PP-OCRv5</span>
+                    </div>
+
+                    <div className="p-6 sm:p-7 space-y-6">
+                      <div>
+                        <h2 className="text-xl font-bold text-white">Upload Question Paper</h2>
+                        <p className="text-xs text-zinc-400 mt-1">
+                          Upload digital PDFs or scanned physical papers.
+                        </p>
+                      </div>
+
+                      <form onSubmit={handleUpload} className="space-y-5 text-sm">
+                        <div>
+                          <label className="font-semibold text-zinc-300 block mb-2">Select Question Paper (PDF)</label>
+                          <div className="relative border-2 border-dashed border-zinc-800 hover:border-white rounded-2xl p-8 text-center cursor-pointer transition-all bg-zinc-950/80">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              onChange={e => setUploadFile(e.target.files[0])}
+                              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                            />
+                            <div className="space-y-3">
+                              <div className="w-12 h-12 rounded-2xl bg-white text-black flex items-center justify-center mx-auto shadow-md">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                              </div>
+                              <div className="font-bold text-white text-base">
+                                {uploadFile ? uploadFile.name : 'Drop question paper PDF here or browse'}
+                              </div>
+                              <span className="text-xs font-mono text-zinc-500 block">PDF up to 25MB · Scanned, Digital & LaTeX</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="font-semibold text-zinc-300 block mb-2">Subject / Academic Title</label>
+                          <input
+                            type="text"
+                            value={subject}
+                            onChange={e => setSubject(e.target.value)}
+                            className="em-input font-mono"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Exam Year</label>
+                            <input
+                              type="text"
+                              value={uploadYear}
+                              onChange={e => setUploadYear(e.target.value)}
+                              className="em-input font-mono"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Semester / Session</label>
+                            <input
+                              type="text"
+                              value={uploadSemester}
+                              onChange={e => setUploadSemester(e.target.value)}
+                              className="em-input font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono space-y-1.5 text-zinc-400">
+                          <div className="flex items-center gap-2 text-white font-bold">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>Pipeline Specifications:</span>
+                          </div>
+                          <div>• PyMuPDF text & vector glyph stream</div>
+                          <div>• OpenCV CLAHE + Otsu Binarization</div>
+                          <div>• PaddleOCR PP-OCRv5 Inference</div>
+                          <div>• Regex Question Boundary Parser</div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={uploading || !uploadFile}
+                          className="w-full em-btn-white disabled:opacity-40"
+                        >
+                          {uploading && <span className="animate-spin text-base">↻</span>}
+                          <span>{uploading ? 'Processing PDF & Extracting OCR...' : 'Upload & Process Paper'}</span>
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+
+                  {/* Extraction Result Window Card */}
+                  <div className="lg:col-span-2 em-tile">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80 gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                          <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        </div>
+                        <span className="font-mono text-xs font-bold text-zinc-300 ml-2">
+                          {extractionView === 'questions' ? 'extracted_questions.json' : 'structured_document.txt'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-0.5 text-xs font-mono">
+                          <button
+                            type="button"
+                            onClick={() => setExtractionView('questions')}
+                            className={`px-3 py-1 rounded-md transition-all ${extractionView === 'questions' ? 'bg-white text-black font-bold shadow' : 'text-zinc-400 hover:text-white'}`}
+                          >
+                            Questions ({questionsList.length})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setExtractionView('page_text')}
+                            className={`px-3 py-1 rounded-md transition-all ${extractionView === 'page_text' ? 'bg-white text-black font-bold shadow' : 'text-zinc-400 hover:text-white'}`}
+                          >
+                            Structured Page Text
+                          </button>
+                        </div>
+                        <div className="hidden md:flex items-center gap-2 font-mono text-xs">
+                          <span className="text-zinc-400">Pages: <b className="text-white">{uploadRes?.total_pages || 0}</b></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {extractionView === 'page_text' ? (
+                      <div className="p-6 sm:p-7 space-y-4">
+                        <div className="flex justify-between items-center pb-3 border-b border-zinc-800">
+                          <div>
+                            <h2 className="text-xl font-bold text-white">Full Page Structured Text</h2>
+                            <span className="text-xs text-zinc-400">Complete OCR extraction reflowed and structured via spaCy linguistic pipeline</span>
+                          </div>
+                          {fullPageText && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(fullPageText);
+                                alert('Structured page text copied to clipboard!');
+                              }}
+                              className="em-btn-dark !py-1 !px-3 !text-xs font-mono"
+                            >
+                              Copy Text
+                            </button>
+                          )}
+                        </div>
+                        <div className="max-h-[550px] overflow-y-auto p-5 rounded-2xl bg-zinc-950 border border-zinc-800 font-mono text-xs text-zinc-200 leading-relaxed whitespace-pre-wrap select-text">
+                          {fullPageText || (uploadRes ? 'No structured text extracted.' : 'Upload a question paper PDF to display structured page text.')}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-6 sm:p-7 space-y-6">
+                        <div className="flex justify-between items-center pb-3 border-b border-zinc-800">
+                          <div>
+                            <h2 className="text-xl font-bold text-white">Extracted Question Corpus</h2>
+                            <span className="text-xs text-zinc-400">Structured question tokens segmented with sub-parts and marks allocations</span>
+                          </div>
+                          {uploadRes && (
+                            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-white text-black">
+                              {uploadRes.subject} ({uploadRes.year})
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="max-h-[550px] overflow-y-auto space-y-4 pr-2">
+                          {questionsList.length > 0 ? (
+                            questionsList.map((q, idx) => (
+                              <div key={q.id || idx} className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-white transition-all space-y-3">
+                                <div className="flex justify-between items-center text-xs">
+                                  <span className="font-mono font-bold text-white px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800">
+                                    Question {q.question_number || idx + 1}
+                                  </span>
+                                  <div className="flex items-center gap-2 font-mono">
+                                    {q.section && (
+                                      <span className="px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+                                        {q.section}
+                                      </span>
+                                    )}
+                                    <span className="px-2.5 py-0.5 rounded bg-white text-black font-bold">
+                                      {q.marks || 0} Marks
+                                    </span>
+                                  </div>
+                                </div>
+                                <p className="text-sm text-zinc-200 leading-relaxed font-sans">
+                                  {q.raw_text || q.cleaned_text}
+                                </p>
+                                {q.sub_parts && q.sub_parts.length > 0 && (
+                                  <div className="pl-4 border-l-2 border-zinc-800 space-y-1.5 pt-1 text-xs">
+                                    {q.sub_parts.map((sp, spIdx) => (
+                                      <div key={spIdx} className="flex justify-between text-zinc-300">
+                                        <span>({sp.label}) {sp.text}</span>
+                                        <span className="font-mono text-zinc-500 font-bold">[{sp.marks || 0}m]</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="py-20 text-center text-sm text-zinc-500">
+                              Upload a question paper PDF to display extracted and segmented questions.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: PAPER STUDIO & GENERATOR */}
+            {activeTab === 'generate' && (
+              <div key="tab-generate" className="tab-animate space-y-8">
+                {/* Hero Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-800">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-mono font-bold border border-white/20">
+                      <span>📐</span>
+                      <span>BLUEPRINT ARCHITECT</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                      Examination Paper Blueprint & Structure Customizer
+                    </h1>
+                    <p className="text-base text-zinc-400 max-w-3xl">
+                      Configure custom syllabus units, section schemas, internal choice OR-pairing, Bloom's cognitive distribution, and download camera-ready PDF examination papers.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Blueprint Configuration Window Card */}
+                <div className="em-tile">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/80">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                      </div>
+                      <span className="font-mono text-xs font-bold text-zinc-300 ml-2">blueprint.config.ts</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-black px-2.5 py-0.5 rounded-full bg-white">
+                      Generator v2.4
+                    </span>
+                  </div>
+
+                  <div className="p-6 sm:p-8 space-y-8">
+                    {/* Active Subject & Grounding Context Banner */}
+                    <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">
+                            Active Subject & Grounding Context
+                          </span>
+                        </div>
+                        <div className="text-xl font-extrabold text-white mt-1">
+                          {subject}
+                        </div>
+                        <span className="text-xs text-zinc-500 font-mono">
+                          Questions are dynamically generated and grounded in your uploaded previous-year papers.
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSubject('Mathematics-II');
+                            setCourseCode('BS102');
+                            setCustomUnits(SYLLABUS_PRESETS.math.units);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                            subject.toLowerCase().includes('math')
+                              ? 'bg-white text-black shadow'
+                              : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+                          }`}
+                        >
+                          📐 Mathematics-II
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSubject('Data Structures and Algorithms');
+                            setCourseCode('CS201');
+                            setCustomUnits(SYLLABUS_PRESETS.dsa.units);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                            subject.toLowerCase().includes('data structure')
+                              ? 'bg-white text-black shadow'
+                              : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+                          }`}
+                        >
+                          🌳 DSA
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Preset Switcher */}
+                    <div>
+                      <div className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 mb-3">
+                        Preset Blueprint Schemes
+                      </div>
+                      <div className="flex flex-wrap gap-3">
+                        {Object.entries(PRESETS).map(([key, p]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => applyPreset(key)}
+                            className={`em-btn-dark !py-2.5 !px-4 !text-sm ${selectedPreset === key ? '!bg-white !text-black !border-white font-bold shadow-[0_0_20px_rgba(255,255,255,0.3)]' : ''}`}
+                          >
+                            <span>{p.name}</span>
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPreset('custom')}
+                          className={`em-btn-dark !py-2.5 !px-4 !text-sm ${selectedPreset === 'custom' ? '!bg-white !text-black !border-white font-bold' : ''}`}
+                        >
+                          <span>⚙ Custom Pattern</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Blueprint Summary Bar */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-2xl bg-zinc-950 border border-zinc-800 text-center">
+                      <div>
+                        <span className="text-xs font-mono uppercase text-zinc-500 block">Total Marks</span>
+                        <span className="text-3xl font-extrabold text-white font-mono">{calculatedTotalMarks}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs font-mono uppercase text-zinc-500 block">Duration</span>
+                        <span className="text-3xl font-extrabold text-white font-mono">{durationHours}h</span>
+                      </div>
+                      <div>
+                        <span className="text-xs font-mono uppercase text-zinc-500 block">Sections</span>
+                        <span className="text-3xl font-extrabold text-white font-mono">{sections.length}</span>
+                      </div>
+                      <div>
+                        <span className="text-xs font-mono uppercase text-zinc-500 block">Total Questions</span>
+                        <span className="text-3xl font-extrabold text-white font-mono">{calculatedTotalQuestions}</span>
+                      </div>
+                    </div>
+
+                    {/* Metadata Settings Collapse */}
+                    <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-4">
+                      <div
+                        onClick={() => setShowMetadataSettings(!showMetadataSettings)}
+                        className="flex justify-between items-center cursor-pointer text-sm font-bold text-zinc-200 hover:text-white"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{showMetadataSettings ? '▼' : '►'}</span>
+                          <span>Examination Header Metadata & Advanced Directives</span>
+                        </span>
+                        <span className="text-xs text-zinc-500 font-mono">
+                          {showMetadataSettings ? 'Hide' : 'Configure'}
+                        </span>
+                      </div>
+
+                      {showMetadataSettings && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4 border-t border-zinc-800 text-sm">
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Subject Name</label>
+                            <input
+                              type="text"
+                              value={subject}
+                              onChange={e => setSubject(e.target.value)}
+                              className="em-input"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Course Code</label>
+                            <input
+                              type="text"
+                              value={courseCode}
+                              onChange={e => setCourseCode(e.target.value)}
+                              className="em-input"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Duration (Hours)</label>
+                            <input
+                              type="number"
+                              step="0.5"
+                              value={durationHours}
+                              onChange={e => setDurationHours(e.target.value)}
+                              className="em-input"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-semibold text-zinc-300 block mb-2">Institution Name</label>
+                            <input
+                              type="text"
+                              value={institution}
+                              onChange={e => setInstitution(e.target.value)}
+                              className="em-input"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="font-semibold text-zinc-300 block mb-2">Examination Title</label>
+                            <input
+                              type="text"
+                              value={examName}
+                              onChange={e => setExamName(e.target.value)}
+                              className="em-input"
+                            />
+                          </div>
+
+                          <div className="md:col-span-3 flex flex-wrap gap-6 pt-2">
+                            <label className="flex items-center gap-2 cursor-pointer text-sm text-zinc-300">
+                              <input
+                                type="checkbox"
+                                checked={incorporateTrends}
+                                onChange={e => setIncorporateTrends(e.target.checked)}
+                                className="w-4 h-4 accent-white rounded"
+                              />
+                              <span>Prioritize Historical High-Frequency Topics</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer text-sm text-zinc-300">
+                              <input
+                                type="checkbox"
+                                checked={avoidDuplicates}
+                                onChange={e => setAvoidDuplicates(e.target.checked)}
+                                className="w-4 h-4 accent-white rounded"
+                              />
+                              <span>De-duplicate against Past Question Corpus</span>
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Course Syllabus Configuration Card */}
+                    <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-6">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 pb-4 border-b border-zinc-800">
+                        <div>
+                          <div className="flex items-center gap-2.5">
+                            <h2 className="text-lg font-bold text-white">Course Syllabus & Unit Definitions</h2>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-white text-black">
+                              {useCustomSyllabus ? `${customUnits.length} Custom Units Active` : 'Standard Baseline'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-zinc-400 mt-1">
+                            When provided, examination questions are strictly targeted to these units and syllabus topics.
+                          </p>
+                        </div>
+
+                        {/* Toggle switch for Custom Syllabus */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-semibold text-zinc-400">Custom Syllabus:</span>
+                          <button
+                            type="button"
+                            onClick={() => setUseCustomSyllabus(!useCustomSyllabus)}
+                            className={`w-14 h-8 rounded-full p-1 transition-all ${useCustomSyllabus ? 'bg-white' : 'bg-zinc-800'}`}
+                          >
+                            <div className={`w-6 h-6 rounded-full transition-transform ${useCustomSyllabus ? 'bg-black translate-x-6' : 'bg-zinc-500 translate-x-0'}`}></div>
+                          </button>
+                        </div>
+                      </div>
+
+                      {useCustomSyllabus ? (
+                        <div className="space-y-5">
+                          {/* Syllabus Input Mode Switcher */}
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex gap-2 p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
+                              <button
+                                type="button"
+                                onClick={() => setSyllabusMode('structured')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${syllabusMode === 'structured' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}
+                              >
+                                Structured Unit Cards
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSyllabusMode('text')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${syllabusMode === 'text' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}
+                              >
+                                Raw Text / Paste Parser
+                              </button>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-xs text-zinc-500 font-mono">Load Preset:</span>
+                              {Object.entries(SYLLABUS_PRESETS).map(([key, p]) => (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={() => applySyllabusPreset(key)}
+                                  className="em-btn-dark !py-1 !px-3 !text-xs !rounded-lg"
+                                >
+                                  {p.course_code || p.name.split(' ')[0]}
+                                </button>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={addCustomUnit}
+                                className="em-btn-white !py-1 !px-3 !text-xs !rounded-lg"
+                              >
+                                + Add Unit
+                              </button>
+                            </div>
+                          </div>
+
+                          {syllabusMode === 'structured' ? (
+                            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                              {customUnits.map((u, idx) => (
+                                <div key={u.id} className="p-5 rounded-2xl bg-black border border-zinc-800 hover:border-white transition-all space-y-3">
+                                  <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2 grow">
+                                      <span className="w-8 h-8 rounded-lg bg-zinc-900 text-white font-mono font-bold text-xs flex items-center justify-center border border-zinc-800 shrink-0">
+                                        U{idx + 1}
+                                      </span>
+                                      <input
+                                        type="text"
+                                        value={u.unit_name}
+                                        onChange={e => updateCustomUnit(u.id, 'unit_name', e.target.value)}
+                                        placeholder={`Unit ${idx + 1} Title`}
+                                        className="em-input !py-2 !px-3 font-semibold text-sm"
+                                      />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeCustomUnit(u.id)}
+                                      className="text-zinc-500 hover:text-rose-400 p-2 text-sm"
+                                      title="Remove Unit"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                    <div>
+                                      <label className="text-zinc-400 block mb-1 font-mono">Topics (comma-separated):</label>
+                                      <textarea
+                                        rows={2}
+                                        value={u.topics}
+                                        onChange={e => updateCustomUnit(u.id, 'topics', e.target.value)}
+                                        placeholder="e.g. Linear Regression, Gradient Descent, Normal Equation..."
+                                        className="em-input !py-2 !px-3 text-xs font-mono"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="text-zinc-400 block mb-1 font-mono">Keywords for Matching:</label>
+                                      <textarea
+                                        rows={2}
+                                        value={u.keywords}
+                                        onChange={e => updateCustomUnit(u.id, 'keywords', e.target.value)}
+                                        placeholder="e.g. regression, cost function, gradient descent, convex..."
+                                        className="em-input !py-2 !px-3 text-xs font-mono"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              <textarea
+                                rows={8}
+                                value={rawSyllabusText}
+                                onChange={e => setRawSyllabusText(e.target.value)}
+                                placeholder={`Paste your course syllabus here. Example format:\n\nUnit 1: Linear Data Structures\nArrays, Linked Lists, Stacks, Queues\n\nUnit 2: Trees and Hierarchical Structures\nBinary Trees, Binary Search Trees, AVL Trees, B-Trees\n\nUnit 3: Graph Algorithms\nBFS, DFS, Dijkstra, Minimum Spanning Trees`}
+                                className="em-input font-mono text-xs"
+                              />
+                              <div className="flex justify-end gap-3">
+                                <button
+                                  type="button"
+                                  onClick={parseSyllabusFromText}
+                                  className="em-btn-white !py-2.5 !px-5 !text-xs"
+                                >
+                                  Parse to Structured Units ➔
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="p-6 rounded-xl bg-black border border-zinc-800 text-xs text-zinc-400 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                          <div>
+                            <span className="font-bold text-white block mb-1">Standard Topic Model Active</span>
+                            <span>Questions will be balanced across all baseline topics derived from the historical paper corpus.</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setUseCustomSyllabus(true)}
+                            className="em-btn-dark !py-2 !px-4 !text-xs shrink-0"
+                          >
+                            + Enter Custom Syllabus
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Section List / Customizer */}
+                    <div className="space-y-6">
+                      <div className="flex justify-between items-center pb-3 border-b border-zinc-800">
+                        <div>
+                          <h2 className="text-xl font-bold text-white">Blueprint Sections & Schema</h2>
+                          <span className="text-xs text-zinc-400">Configure sections, questions to attempt, question types, and unit coverage</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={addSection}
+                          className="em-btn-white !py-2 !px-4 !text-xs"
+                        >
+                          + Add Section
+                        </button>
+                      </div>
+
+                      <div className="space-y-5">
+                        {sections.map((s, sIdx) => {
+                          const secAttempt = s.questions_to_attempt ? parseInt(s.questions_to_attempt, 10) : parseInt(s.question_count, 10);
+                          const secTotal = secAttempt * parseFloat(s.marks_per_question || 0);
+
+                          return (
+                            <div key={s.id} className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-white transition-all space-y-4">
+                              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+                                <div className="flex items-center gap-3 grow">
+                                  <input
+                                    type="text"
+                                    value={s.section_name}
+                                    onChange={e => updateSection(s.id, 'section_name', e.target.value)}
+                                    className="em-input !py-1.5 !px-3 font-bold text-base max-w-[200px]"
+                                  />
+                                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-white text-black">
+                                    {secTotal} Marks Total
+                                  </span>
+                                  {s.has_internal_choice && (
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-zinc-800 text-white border border-zinc-700">
+                                      OR-Pairing
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    disabled={sIdx === 0}
+                                    onClick={() => moveSection(sIdx, -1)}
+                                    className="p-2 text-zinc-400 hover:text-white disabled:opacity-30"
+                                    title="Move Up"
+                                  >
+                                    ▲
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={sIdx === sections.length - 1}
+                                    onClick={() => moveSection(sIdx, 1)}
+                                    className="p-2 text-zinc-400 hover:text-white disabled:opacity-30"
+                                    title="Move Down"
+                                  >
+                                    ▼
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeSection(s.id)}
+                                    className="p-2 text-zinc-400 hover:text-rose-400"
+                                    title="Delete Section"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                  <label className="text-zinc-400 block mb-1 font-mono text-xs">Total Questions:</label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={s.question_count}
+                                    onChange={e => updateSection(s.id, 'question_count', parseInt(e.target.value, 10) || 1)}
+                                    className="em-input !py-2 !px-3 font-mono font-bold"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-zinc-400 block mb-1 font-mono text-xs">To Attempt:</label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    max={s.question_count}
+                                    value={s.questions_to_attempt || s.question_count}
+                                    onChange={e => updateSection(s.id, 'questions_to_attempt', parseInt(e.target.value, 10) || 1)}
+                                    className="em-input !py-2 !px-3 font-mono font-bold"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-zinc-400 block mb-1 font-mono text-xs">Marks / Question:</label>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    min="0.5"
+                                    value={s.marks_per_question}
+                                    onChange={e => updateSection(s.id, 'marks_per_question', parseFloat(e.target.value) || 1)}
+                                    className="em-input !py-2 !px-3 font-mono font-bold"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-zinc-400 block mb-1 font-mono text-xs">Section Total:</label>
+                                  <div className="em-input !py-2 !px-3 font-mono font-bold text-white bg-zinc-900 flex items-center">
+                                    {secTotal}m
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Question Types Toggle */}
+                              <div className="flex flex-wrap items-center gap-2 pt-2">
+                                <span className="text-xs text-zinc-400 font-mono mr-2">Question Types:</span>
+                                {['short', 'medium', 'long', 'mcq', 'numerical'].map(t => {
+                                  const active = (s.allowed_question_types || []).includes(t);
+                                  return (
+                                    <button
+                                      key={t}
+                                      type="button"
+                                      onClick={() => toggleQuestionType(s.id, t)}
+                                      className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${active ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-600'}`}
+                                    >
+                                      {t.toUpperCase()}
+                                    </button>
+                                  );
+                                })}
+
+                                <label className="flex items-center gap-2 ml-auto cursor-pointer text-xs text-zinc-300">
+                                  <input
+                                    type="checkbox"
+                                    checked={!!s.has_internal_choice}
+                                    onChange={e => updateSection(s.id, 'has_internal_choice', e.target.checked)}
+                                    className="w-4 h-4 accent-white rounded"
+                                  />
+                                  <span>Internal Choice (OR-Pairing)</span>
+                                </label>
+                              </div>
+
+                              {/* Unit Target Coverage */}
+                              <div className="flex flex-wrap items-center gap-2 pt-2">
+                                <span className="text-xs text-zinc-400 font-mono mr-2">Target Units:</span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateSection(s.id, 'unit_coverage', [])}
+                                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${(!s.unit_coverage || s.unit_coverage.length === 0) ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 border border-zinc-800'}`}
+                                >
+                                  All Units
+                                </button>
+                                {[1, 2, 3, 4, 5].map(u => {
+                                  const active = (s.unit_coverage || []).includes(u);
+                                  return (
+                                    <button
+                                      key={u}
+                                      type="button"
+                                      onClick={() => toggleUnitCoverage(s.id, u)}
+                                      className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${active ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 border border-zinc-800'}`}
+                                    >
+                                      Unit {u}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Generate Action Button */}
+                    <div className="pt-6 border-t border-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-6">
+                      <div className="text-sm text-zinc-400 font-mono">
+                        Blueprint: <b className="text-white">{calculatedTotalMarks} Marks</b> · {sections.length} Section(s)
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={genLoading}
+                        className="em-btn-white w-full sm:w-auto !py-4 !px-8 text-base shadow-[0_0_35px_rgba(255,255,255,0.35)]"
+                      >
+                        {genLoading && <span className="animate-spin text-lg">↻</span>}
+                        <span>{genLoading ? 'Compiling Blueprint & Generating Questions...' : 'Generate Complete Question Paper'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Generated Paper Preview & Independent Validation */}
+                {generatedPaper && (
+                  <div className="space-y-6">
+                    {/* Validation Card */}
+                    {valReport && (
+                      <div className="em-tile p-6 sm:p-7 space-y-4">
+                        <div className="flex justify-between items-center pb-4 border-b border-zinc-800">
+                          <div className="flex items-center gap-3">
+                            <span className={`w-3 h-3 rounded-full ${valReport.is_valid ? 'bg-white shadow-[0_0_10px_#ffffff]' : 'bg-rose-500'}`}></span>
+                            <span className="font-bold text-white text-base">
+                              {valReport.is_valid ? 'All Academic Blueprint Constraints Satisfied' : 'Validation Constraints Flagged'}
+                            </span>
+                          </div>
+                          <span className="px-3 py-1 rounded-full bg-white text-black font-mono font-extrabold text-sm shadow-md">
+                            Score: {valReport.overall_quality_score}/100
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 font-mono text-xs">
+                          {valReport.passed_checks.map((c, i) => (
+                            <div key={i} className="text-zinc-300 flex items-center gap-2">
+                              <span className="font-bold text-white">✓</span>
+                              <span>{c}</span>
+                            </div>
+                          ))}
+                          {valReport.warnings && valReport.warnings.map((w, i) => (
+                            <div key={i} className="text-zinc-400 flex items-center gap-2">
+                              <span className="font-bold text-white">⚠</span>
+                              <span>{w}</span>
+                            </div>
+                          ))}
+                          {valReport.failed_checks && valReport.failed_checks.map((f, i) => (
+                            <div key={i} className="text-rose-400 font-semibold flex items-center gap-2">
+                              <span className="font-bold">✗</span>
+                              <span>{f}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Toolbar */}
+                    <div className="flex justify-between items-center p-5 rounded-2xl bg-zinc-950 border border-zinc-800">
+                      <button
+                        onClick={() => setShowRubrics(!showRubrics)}
+                        className="em-btn-dark !py-2.5 !px-5 !text-xs"
+                      >
+                        {showRubrics ? 'Hide Marking Schemes' : 'Show Marking Schemes & Rubrics'}
+                      </button>
+                      <button
+                        onClick={handleDownloadPDF}
+                        className="em-btn-white !py-2.5 !px-6 !text-xs"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Download Camera-Ready PDF</span>
+                      </button>
+                    </div>
+
+                    {/* Academic Question Paper Preview Sheet */}
+                    <div className="bg-zinc-950 p-8 sm:p-14 rounded-3xl border-2 border-zinc-800 shadow-2xl font-serif text-white text-sm space-y-6">
+                      {/* Top Registration & QP Code Bar */}
+                      <div className="flex justify-between items-center text-xs font-mono border-b border-zinc-800 pb-3 text-zinc-400">
+                        <span><b>Reg. No.:</b> [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</span>
+                        <span><b>Q.P. Code:</b> S{Math.abs((generatedPaper.id || 'paper').split('').reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) | 0, 0)) % 899 + 101}</span>
+                      </div>
+
+                      <div className="text-center space-y-1.5 pt-1">
+                        <h3 className="font-bold text-xl sm:text-2xl uppercase tracking-wider text-white">
+                          {generatedPaper.institution_name?.toLowerCase().includes('antigravity') ? 'NATIONAL INSTITUTE OF TECHNOLOGY' : generatedPaper.institution_name}
+                        </h3>
+                        <p className="text-xs uppercase tracking-widest text-zinc-400 font-sans">
+                          Autonomous Institution &middot; Affiliated to State Technological University
+                        </p>
+                        <h4 className="font-semibold text-sm sm:text-base uppercase tracking-wide text-zinc-200 pt-1">
+                          {generatedPaper.examination_name || 'B.Tech Degree End Semester Examinations'}
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-sans text-xs text-zinc-300 pt-3 border-t border-b border-zinc-800 my-3 py-2 text-left">
+                          <div><span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider">Course / Subject</span> <b>{generatedPaper.course_code ? `${generatedPaper.course_code} - ` : ''}{generatedPaper.subject}</b></div>
+                          <div><span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider">Max Marks</span> <b>{generatedPaper.total_marks} Marks</b></div>
+                          <div><span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider">Duration</span> <b>{generatedPaper.duration_hours} Hours</b></div>
+                          <div><span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider">Semester / Exam</span> <b>Regular / End-Term</b></div>
+                        </div>
+
+                        <div className="text-left font-sans text-[11px] text-zinc-400 bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/80 space-y-0.5">
+                          <b>General Instructions:</b>
+                          <div>1. Answer ALL questions from Part A (Compulsory).</div>
+                          <div>2. Answer questions from subsequent sections according to choice constraints.</div>
+                          <div>3. The figures in the right-hand margin indicate full marks for the respective questions.</div>
+                          <div>4. Mathematical tables and non-programmable scientific calculators are permitted. State all assumptions clearly.</div>
+                        </div>
+                      </div>
+
+                      {generatedPaper.sections.map((sec, sIdx) => (
+                        <div key={sIdx} className="space-y-4 pt-2">
+                          <div className="text-center font-sans font-bold text-sm uppercase tracking-wide text-white border-b border-dashed border-zinc-800 pb-2">
+                            {sec.section_name} - <span className="font-normal italic normal-case text-zinc-400">{sec.description}</span>
+                          </div>
+                          <div className="space-y-5">
+                            {sec.questions.map((q, qIdx) => {
+                              const isOr = q.question_number?.includes('(OR)');
+                              const rawStem = (q.question_text || '').trim();
+                              const hasSubParts = q.sub_parts && q.sub_parts.length > 0;
+                              const hasDistinctStem = (
+                                hasSubParts &&
+                                Boolean(rawStem) &&
+                                !rawStem.toLowerCase().startsWith('(a)') &&
+                                !rawStem.toLowerCase().startsWith('a)') &&
+                                !q.sub_parts.some(sp => sp.text && rawStem.includes(sp.text.slice(0, 20)))
+                              );
+
+                              return (
+                                <div key={q.id || qIdx} className="space-y-2">
+                                  {isOr && (
+                                    <div className="text-center font-bold text-zinc-500 font-sans my-3 tracking-widest text-xs">
+                                      [ &mdash; OR &mdash; ]
+                                    </div>
+                                  )}
+                                  <div className="flex justify-between items-start gap-4">
+                                    <span className="font-bold font-sans font-mono w-14 shrink-0 text-white">
+                                      {isOr ? '' : `${q.question_number}.`}
+                                    </span>
+                                    <div className="grow space-y-2">
+                                      {(!hasSubParts || hasDistinctStem) && (
+                                        <p className="leading-relaxed text-zinc-200 text-sm">
+                                          {q.question_text}
+                                        </p>
+                                      )}
+                                      {hasSubParts && (
+                                        <div className="space-y-2 pt-1 font-sans text-xs">
+                                          {q.sub_parts.map((sp, spIdx) => (
+                                            <div key={spIdx} className="flex justify-between text-zinc-200 leading-relaxed gap-3">
+                                              <span><b>({sp.label})</b> {sp.text}</span>
+                                              <span className="font-mono font-semibold text-zinc-400 shrink-0">[{sp.marks}m]</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                      {showRubrics && q.marking_scheme?.length > 0 && (
+                                        <div className="p-4 bg-zinc-950 rounded-xl font-sans text-xs text-zinc-300 border border-zinc-800 mt-2 space-y-1">
+                                          <b className="block text-white font-mono">Step-by-Step Marking Rubric:</b>
+                                          <ul className="list-disc pl-4 space-y-0.5">
+                                            {q.marking_scheme.map((rubric, rIdx) => (
+                                              <li key={rIdx}>{rubric}</li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <span className="font-bold font-sans font-mono text-white shrink-0">
+                                      [{q.marks}]
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 4: LINGUISTIC NLP LAB */}
+            {activeTab === 'playground' && (
+              <div key="tab-playground" className="tab-animate max-w-4xl mx-auto space-y-8">
+                {/* Hero Header */}
+                <div className="text-center space-y-3 mb-6">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-mono font-bold">
+                    <span className="w-2 h-2 rounded-full bg-white"></span>
+                    <span>NLP Linguistic Playground</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                    Cognitive & Syllabus Taxonomy Analyzer
+                  </h2>
+                  <p className="text-base text-zinc-400 max-w-xl mx-auto">
+                    Directly test the 3-tier hybrid syllabus topic classifier and the Revised Bloom's Taxonomy cognitive parser with real-time feedback.
+                  </p>
+                </div>
+
+                {/* macOS Card */}
+                <div className="em-tile">
+                  <div className="bg-zinc-950 px-6 py-4 border-b border-zinc-800 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                        <span className="w-3 h-3 rounded-full bg-zinc-700"></span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-zinc-300 ml-2">nlp_playground.py</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-black bg-white px-3 py-1 rounded-full">
+                      spaCy + Semantic Vectors
+                    </span>
+                  </div>
+
+                  <div className="p-6 sm:p-8 space-y-6">
+                    {/* Domain / Subject Selector */}
+                    <div className="p-4 bg-zinc-900/80 rounded-2xl border border-zinc-800 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400">Target Syllabus Domain:</span>
+                        <span className="text-[11px] font-mono text-zinc-500">Gemini LLM & Multi-tier Vector Classifier</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { id: 'auto', label: '⚡ Auto-Detect Domain' },
+                          { id: 'Computer Organization and Architecture', label: '⚙️ Architecture (COA)' },
+                          { id: 'Operating Systems', label: '💻 Operating Systems' },
+                          { id: 'Mathematics - II', label: '📐 Mathematics-II' },
+                          { id: 'Data Structures and Algorithms', label: '🌳 DSA' },
+                          { id: 'Database Management Systems', label: '🗄️ DBMS' },
+                        ].map(sub => (
+                          <button
+                            key={sub.id}
+                            type="button"
+                            onClick={() => setPlaySubject(sub.id)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+                              playSubject === sub.id
+                                ? 'bg-white text-black shadow'
+                                : 'bg-black text-zinc-400 hover:text-white border border-zinc-800'
+                            }`}
+                          >
+                            {sub.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm">
+                        <label className="font-semibold text-zinc-200">Enter Exam Question Prompt</label>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs text-zinc-500 font-mono">Try Samples:</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Computer Organization and Architecture');
+                              setPlayPrompt("What is pipelining in computer architecture? Explain pipeline hazards.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            COA (Pipelining)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Computer Organization and Architecture');
+                              setPlayPrompt("What is the meaning of a gigabyte in computer storage hierarchy?");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            COA (Gigabyte)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Operating Systems');
+                              setPlayPrompt("Explain deadlock prevention and avoidance using Banker's algorithm and resource allocation graphs.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            OS (Deadlock)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Mathematics - II');
+                              setPlayPrompt("Find the particular integral of the differential equation y'' + y = cos x.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            Math (ODE)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Mathematics - II');
+                              setPlayPrompt("State Cauchy-Riemann equations in polar form and test if f(z) = |z|^2 is analytic.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            Math (Complex)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Data Structures and Algorithms');
+                              setPlayPrompt("Explain the working of AVL Tree rotations with an example of Left-Right (LR) imbalance.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            DSA (Trees)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlaySubject('Database Management Systems');
+                              setPlayPrompt("Define BCNF (Boyce-Codd Normal Form) and explain lossless-join decomposition with functional dependencies.");
+                            }}
+                            className="text-xs px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-mono cursor-pointer"
+                          >
+                            DBMS (BCNF)
+                          </button>
+                        </div>
+                      </div>
+                      <textarea
+                        rows={4}
+                        value={playPrompt}
+                        onChange={e => setPlayPrompt(e.target.value)}
+                        placeholder="Paste any examination question prompt here (Operating Systems, Mathematics, DSA, DBMS)..."
+                        className="em-input font-mono text-sm"
+                      ></textarea>
+                    </div>
+
+                    <button
+                      onClick={handleClassify}
+                      disabled={clfLoading}
+                      className="w-full em-btn-white !py-4 text-base"
+                    >
+                      {clfLoading && <span className="animate-spin text-base">↻</span>}
+                      <span>{clfLoading ? 'Analyzing Question...' : 'Run Dual Topic & Bloom’s Taxonomy Classification'}</span>
+                    </button>
+
+                    {clfResult && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                        {/* Topic Classification Result Card */}
+                        <div className="rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden shadow-sm hover:border-white transition-all">
+                          <div className="px-5 py-3 bg-black border-b border-zinc-800 flex justify-between items-center">
+                            <span className="font-mono text-xs text-white font-bold">topic_classifier.py</span>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-white text-black">
+                              {Math.round((clfResult.topic_classification?.confidence || 0) * 100)}% Confidence
+                            </span>
+                          </div>
+                          <div className="p-5 text-sm space-y-2.5">
+                            <div><span className="text-zinc-500">Domain / Subject:</span> <b className="text-white">{clfResult.topic_classification?.subject || 'Operating Systems'}</b> <span className="text-xs text-zinc-400 font-mono font-bold">({clfResult.topic_classification?.course_code || 'CS202'})</span></div>
+                            <div><span className="text-zinc-500">Unit:</span> <b className="text-white">Unit {clfResult.topic_classification?.unit_number} ({clfResult.topic_classification?.unit_name})</b></div>
+                            <div><span className="text-zinc-500">Topic:</span> <b className="text-white">{clfResult.topic_classification?.topic}</b></div>
+                            <div><span className="text-zinc-500">Tier / Engine:</span> <span className="font-mono text-zinc-300">{clfResult.topic_classification?.classification_method || clfResult.topic_classification?.method}</span></div>
+                            <div className="pt-2">
+                              <span className="block text-zinc-500 mb-1.5 text-xs">Keywords Detected:</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {clfResult.topic_classification?.matched_keywords?.map((k, i) => (
+                                  <span key={i} className="px-2.5 py-0.5 rounded bg-zinc-900 text-xs font-mono text-white border border-zinc-800">
+                                    {k}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Bloom's Classification Result Card */}
+                        <div className="rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden shadow-sm hover:border-white transition-all">
+                          <div className="px-5 py-3 bg-black border-b border-zinc-800 flex justify-between items-center">
+                            <span className="font-mono text-xs text-white font-bold">blooms_engine.py</span>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-white text-black">
+                              {Math.round((clfResult.blooms_classification?.confidence || 0) * 100)}% Confidence
+                            </span>
+                          </div>
+                          <div className="p-5 text-sm space-y-2.5">
+                            <div><span className="text-zinc-500">Cognitive Level:</span> <span className="font-bold text-white">{clfResult.blooms_classification?.blooms_level}</span></div>
+                            <div><span className="text-zinc-500">Directive Verb:</span> <span className="font-mono text-white font-bold">{clfResult.blooms_classification?.directive_verb || 'None'}</span></div>
+                            <div><span className="text-zinc-500">Category:</span> <span className="text-white font-semibold">{clfResult.blooms_classification?.is_higher_order ? 'Higher-Order Thinking (HOT)' : 'Lower-Order Thinking (LOT)'}</span></div>
+                            <p className="text-xs text-zinc-400 pt-2 border-t border-zinc-800">
+                              {clfResult.blooms_classification?.rationale}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Platform Footer */}
+          <footer className="mt-auto border-t border-zinc-800 bg-black py-8 text-center text-sm text-zinc-400">
+            <div className="max-w-[1400px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden p-0.5">
+                  <img
+                    src="/icon.png"
+                    alt="PaperMind"
+                    className="w-full h-full object-contain"
+                    onError={(e) => { e.target.src = 'assets/papermind_icon.png'; }}
+                  />
+                </div>
+                <span className="font-bold text-white">PaperMind Studio</span>
+                <span className="text-zinc-600">·</span>
+                <span>Understand Papers. Predict Patterns. Create Exams.</span>
+              </div>
+              <div className="flex items-center gap-2.5 font-mono text-xs text-zinc-400">
+                <span className="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800">PaddleOCR PP-OCRv5</span>
+                <span className="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800">spaCy NLP</span>
+                <span className="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800">ReportLab Engine</span>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
